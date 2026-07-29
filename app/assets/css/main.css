@@ -45,8 +45,9 @@
   --z-sticky:   40;
   --z-fixed:    50;
   --z-modal:    60;
-  --z-cursor:  100;
-  --z-toast:   200;
+  --z-cursor:     100;
+  --z-toast:      200;
+  --z-preloader:  300;
 }
 
 /* ─── Base Layer ─────────────────────────────────────────────────────────────
