@@ -147,6 +147,7 @@ onUnmounted(() => {
         v-if="videoSrc"
         :src="videoSrc"
         :poster="videoPoster"
+        preload="auto"
         fit="cover"
         class="h-full w-full"
       />

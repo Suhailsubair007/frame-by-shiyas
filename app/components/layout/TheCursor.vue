@@ -19,8 +19,14 @@ const isActive = ref(false)
 let xTo: ReturnType<typeof gsap.quickTo>
 let yTo: ReturnType<typeof gsap.quickTo>
 
-onMounted(() => {
+// watchEffect tracks hasPointer + prefersReducedMotion reactively.
+// async/await nextTick defers past both VueUse's SSR-safe media query update
+// and the v-if re-render that places dotRef/ringRef into the DOM.
+watchEffect(async () => {
   if (!hasPointer.value || prefersReducedMotion.value) return
+  if (xTo) return  // already initialised — guard against re-entry
+
+  await nextTick()
 
   const ring = ringRef.value
   const dot  = dotRef.value

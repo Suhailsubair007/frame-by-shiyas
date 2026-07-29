@@ -31,7 +31,10 @@ useSeoMeta({
 
     <FilmsSection />
 
-    <!-- Phase 7: PhotographySection -->
-    <!-- Phase 8: AboutSection -->
+    <PhotographySection />
+
+    <AboutSection />
+
+    <ContactSection />
   </main>
 </template>
