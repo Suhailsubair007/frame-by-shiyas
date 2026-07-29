@@ -64,16 +64,15 @@ function onLeave(): void {
     @mouseenter="onEnter"
     @mouseleave="onLeave"
   >
-    <!-- Poster — real image or gradient placeholder -->
+    <!-- Poster — external placeholder or gradient fallback -->
     <div class="absolute inset-0">
-      <BaseImage
+      <img
         v-if="hasPoster"
         :src="film.posterImage.src"
         :alt="film.posterImage.alt"
-        :width="film.posterImage.width"
-        :height="film.posterImage.height"
-        fit="cover"
-        class="h-full w-full"
+        class="h-full w-full object-cover"
+        loading="lazy"
+        decoding="async"
       />
       <div v-else class="h-full w-full" :style="{ background: posterGradient }" />
     </div>
