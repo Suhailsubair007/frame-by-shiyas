@@ -8,6 +8,8 @@
     <TheGrainOverlay />
     <TheCursor />
 
-    <slot />
+    <ThePageTransition>
+      <slot />
+    </ThePageTransition>
   </div>
 </template>
