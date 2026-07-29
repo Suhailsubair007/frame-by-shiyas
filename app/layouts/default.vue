@@ -1,13 +1,17 @@
 <script setup lang="ts">
-// TheNavigation and TheFooter will be added in Phase 4
+// TheFooter will be added in Phase 8
 </script>
 
 <template>
   <div class="relative min-h-screen overflow-x-hidden bg-void text-text antialiased">
-    <!-- Global overlays — always on top, pointer-events disabled -->
+    <!-- Global overlays — pointer-events disabled, always on top -->
     <TheGrainOverlay />
     <TheCursor />
 
+    <!-- Navigation — fixed, above page content -->
+    <TheNavigation />
+
+    <!-- Page content wrapped in cinematic route transition -->
     <ThePageTransition>
       <slot />
     </ThePageTransition>
