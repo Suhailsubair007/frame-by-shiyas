@@ -24,7 +24,8 @@ useSeoMeta({
       video-poster=""
     />
 
-    <!-- Phase 6: FilmsSection -->
+    <FilmsSection />
+
     <!-- Phase 7: PhotographySection -->
     <!-- Phase 8: AboutSection -->
   </main>
