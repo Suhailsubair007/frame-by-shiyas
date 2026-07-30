@@ -202,7 +202,7 @@ onUnmounted(() => {
     </div>
 
     <!-- ── Bottom content ─────────────────────────────────────────────── -->
-    <div class="relative mt-auto flex items-end justify-between px-6 pb-20 md:px-10 md:pb-24">
+    <div class="relative mt-auto flex items-end justify-between px-6 pb-16 md:px-10 md:pb-20">
 
       <!-- Left — headline -->
       <div>
@@ -215,8 +215,8 @@ onUnmounted(() => {
 
         <h1
           ref="titleRef"
-          class="font-display font-normal italic leading-[0.92] text-text"
-          style="font-size: clamp(64px, 9.5vw, 158px);"
+          class="font-display font-normal italic leading-[0.88] text-text"
+          style="font-size: clamp(52px, 7.5vw, 130px);"
         >
           Visual<br />Storyteller
         </h1>
