@@ -167,6 +167,8 @@ onUnmounted(() => {
         alt=""
         width="1920"
         height="1080"
+        fetchpriority="high"
+        decoding="async"
         class="h-full w-full object-cover object-center"
         aria-hidden="true"
       />
