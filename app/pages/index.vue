@@ -15,18 +15,8 @@ useSeoMeta({
 
 <template>
   <main>
-    <!--
-      videoSrc / videoPoster will be real assets once media is provided.
-      The hero renders beautifully with the gradient fallback until then.
-    -->
-    <!--
-      Placeholder media from public CDNs — swap for real production assets.
-      Video: Google Sample Videos (public domain, for dev only).
-      Poster: Picsum Photos seeded image shown while video buffers.
-    -->
     <HeroSection
-      video-src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4"
-      video-poster="https://picsum.photos/seed/hero-shiyas/1920/1080"
+      image-src="https://res.cloudinary.com/duzyrjr0g/image/upload/v1747719310/samples/two-ladies.jpg"
     />
 
     <FilmsSection />

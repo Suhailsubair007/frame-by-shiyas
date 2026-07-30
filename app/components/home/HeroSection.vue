@@ -10,9 +10,10 @@ import { useCursorState }   from '@/composables/useCursorState'
 const props = defineProps<{
   videoSrc?:    string
   videoPoster?: string
+  imageSrc?:    string
 }>()
 
-const { isComplete, isFirstVisit } = usePreloader()
+const { isComplete } = usePreloader()
 const prefersReducedMotion         = useReducedMotion()
 const { setState, reset }          = useCursorState()
 
@@ -26,19 +27,24 @@ const indexRef     = ref<HTMLElement | null>(null)
 
 let split: SplitType | null = null
 let scrollLineAnim: gsap.core.Tween | null = null
+let animateInPending = false
 
-// ── On mount: decide whether to prepare the cinematic entry or show content ──
+// ── On mount: decide whether to wait for the preloader or show immediately ──
 onMounted(() => {
+  // Capture at mount time — ThePreloader.onMounted fires before ours (it's a
+  // sibling earlier in app.vue). If isComplete is already true here, we're
+  // either navigating back from another page OR the preloader was skipped for a
+  // returning session. In both cases, show content right away.
+  const wasAlreadyComplete = isComplete.value
+
   nextTick(() => {
-    if (!isFirstVisit) {
-      // Returning visit (navigated here from another page) — content shows
-      // immediately; the page-transition curtain already handled the reveal.
+    if (wasAlreadyComplete || prefersReducedMotion.value) {
       startScrollLoop()
       return
     }
 
-    // First visit — preloader is playing. Hide everything until it finishes.
-    if (prefersReducedMotion.value) return  // animateIn() will reveal immediately
+    // Fresh load with preloader still running — hide everything until it finishes.
+    animateInPending = true
 
     gsap.set([videoWrapRef.value, rolesRef.value, scrollRef.value, eyebrowRef.value, indexRef.value], {
       opacity: 0,
@@ -53,12 +59,19 @@ onMounted(() => {
       })
       gsap.set(split.words ?? [], { y: '115%' })
     }
+
+    // Safety net for HMR: if isComplete flipped true between mount and nextTick
+    if (isComplete.value) {
+      animateInPending = false
+      animateIn()
+    }
   })
 })
 
-// ── Run cinematic entry once — only after the preloader, on the first visit ──
+// ── Run the cinematic entry once the preloader completes ──
 watch(isComplete, (done) => {
-  if (!done) return
+  if (!done || !animateInPending) return
+  animateInPending = false
   nextTick(() => animateIn())
 })
 
@@ -111,6 +124,7 @@ function animateIn(): void {
 }
 
 function startScrollLoop(): void {
+  if (scrollLineAnim) return  // already running
   const line = scrollRef.value?.querySelector<HTMLElement>('.scroll-line')
   if (!line || prefersReducedMotion.value) return
 
@@ -140,15 +154,25 @@ onUnmounted(() => {
     class="relative flex h-dvh w-full flex-col overflow-hidden"
     aria-label="Hero — Frame by Shiyas"
   >
-    <!-- ── Background — video or gradient ─────────────────────────────── -->
+    <!-- ── Background — video, image, or gradient ───────────────────── -->
     <div ref="videoWrapRef" class="absolute inset-0">
       <BaseVideo
         v-if="videoSrc"
         :src="videoSrc"
-        :poster="videoPoster"
+        :poster="videoPoster ?? imageSrc"
         preload="auto"
         fit="cover"
         class="h-full w-full"
+      />
+
+      <img
+        v-else-if="imageSrc"
+        :src="imageSrc"
+        alt=""
+        width="1920"
+        height="1080"
+        class="h-full w-full object-cover object-center"
+        aria-hidden="true"
       />
 
       <div
