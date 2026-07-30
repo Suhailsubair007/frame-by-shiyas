@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<{
       height="1280"
       class="h-full w-full object-cover transition-transform duration-700"
       :class="isActive ? 'scale-100' : 'scale-105'"
-      loading="lazy"
+      loading="eager"
     />
 
     <!-- Gradient veil -->

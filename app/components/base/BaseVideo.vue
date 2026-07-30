@@ -21,6 +21,8 @@ const props = withDefaults(defineProps<{
   fit?:         'cover' | 'contain'
   cursorPlay?:  boolean
   reveal?:      boolean
+  // Skip the opacity-0 reveal and show the video immediately (poster never shown)
+  eager?:       boolean
 }>(), {
   autoplay:    true,
   loop:        true,
@@ -31,6 +33,7 @@ const props = withDefaults(defineProps<{
   fit:         'cover',
   cursorPlay:  false,
   reveal:      false,
+  eager:       false,
 })
 
 const emit = defineEmits<{
@@ -40,7 +43,7 @@ const emit = defineEmits<{
 }>()
 
 const videoRef      = ref<HTMLVideoElement | null>(null)
-const isReady       = ref(false)
+const isReady       = ref(props.eager)
 const isPlaying     = ref(false)
 let   fallbackTimer = 0
 const { setState, reset } = useCursorState()
