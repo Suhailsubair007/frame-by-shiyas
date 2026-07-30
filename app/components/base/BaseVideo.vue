@@ -9,18 +9,18 @@ interface VIDEO_SOURCE {
 }
 
 const props = withDefaults(defineProps<{
-  src?:        string
-  sources?:    VIDEO_SOURCE[]
-  poster?:     string
-  autoplay?:   boolean
-  loop?:       boolean
-  muted?:      boolean
+  src?:         string
+  sources?:     VIDEO_SOURCE[]
+  poster?:      string
+  autoplay?:    boolean
+  loop?:        boolean
+  muted?:       boolean
   playsinline?: boolean
-  preload?:    'none' | 'metadata' | 'auto'
-  threshold?:  number
-  fit?:        'cover' | 'contain'
-  cursorPlay?: boolean
-  reveal?:     boolean
+  preload?:     'none' | 'metadata' | 'auto'
+  threshold?:   number
+  fit?:         'cover' | 'contain'
+  cursorPlay?:  boolean
+  reveal?:      boolean
 }>(), {
   autoplay:    true,
   loop:        true,
@@ -34,9 +34,9 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  play:   []
-  pause:  []
-  ready:  []
+  play:  []
+  pause: []
+  ready: []
 }>()
 
 const videoRef  = ref<HTMLVideoElement | null>(null)
@@ -44,7 +44,16 @@ const isReady   = ref(false)
 const isPlaying = ref(false)
 const { setState, reset } = useCursorState()
 
-// Intersection observer auto-play / auto-pause
+// Vue's :muted binding sets the HTML attribute, not the DOM property.
+// Browsers check the DOM property for autoplay permission, so we must set
+// it directly after mount — otherwise autoplay is silently blocked.
+onMounted(() => {
+  if (videoRef.value && props.muted) {
+    videoRef.value.muted = true
+  }
+})
+
+// ── Intersection-observer-driven play / pause ────────────────────────────────
 const { stop } = useIntersectionObserver(
   videoRef,
   ([entry]) => {
@@ -52,11 +61,13 @@ const { stop } = useIntersectionObserver(
     if (!el || !props.autoplay) return
 
     if (entry.isIntersecting) {
+      // Ensure muted before every play attempt (some browsers reset it)
+      if (props.muted) el.muted = true
       el.play().then(() => {
         isPlaying.value = true
         emit('play')
       }).catch(() => {
-        // Autoplay blocked (common on mobile) — silently ignore
+        // Autoplay blocked by browser policy — silently ignore
       })
     } else {
       el.pause()
@@ -67,15 +78,12 @@ const { stop } = useIntersectionObserver(
   { threshold: props.threshold },
 )
 
-function onCanPlay(): void {
-  isReady.value = true
-  emit('ready')
-}
-
-// loadeddata fires as soon as the first frame is decoded — much earlier than
-// canplaythrough (which waits until the full stream can play without rebuffering).
-// For a large 4K hero video canplaythrough may never fire on slow connections.
-function onLoadedData(): void {
+// ── Ready state — show video as soon as first frame is decoded ───────────────
+// loadeddata  → first frame available (much earlier than canplaythrough)
+// canplaythrough → full buffer ready (may never fire for large files)
+// playing     → fallback: video is definitely running, show it now
+function markReady(): void {
+  if (isReady.value) return
   isReady.value = true
   emit('ready')
 }
@@ -102,7 +110,6 @@ onUnmounted(stop)
     <video
       ref="videoRef"
       :loop="loop"
-      :muted="muted"
       :playsinline="playsinline"
       :preload="preload"
       :poster="poster"
@@ -111,17 +118,16 @@ onUnmounted(stop)
         fit === 'cover' ? 'object-cover' : 'object-contain',
         isReady ? 'opacity-100' : 'opacity-0',
       ]"
-      @loadeddata="onLoadedData"
-      @canplaythrough="onCanPlay"
+      @loadeddata="markReady"
+      @canplaythrough="markReady"
+      @playing="markReady"
     >
-      <!-- Multiple sources for resolution/format fallbacks -->
       <source
         v-for="s in sources"
         :key="s.src"
         :src="s.src"
         :type="s.type"
       />
-      <!-- Single src shorthand -->
       <source v-if="src && !sources" :src="src" />
     </video>
   </div>
