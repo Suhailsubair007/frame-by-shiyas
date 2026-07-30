@@ -4,7 +4,7 @@ import { usePreloader } from '@/composables/usePreloader'
 
 definePageMeta({ layout: 'default' })
 
-const HERO_VIDEO  = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/4231686-uhd_3840_2160_30fps.mp4'
+const HERO_VIDEO  = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/TITLE.mp4'
 const HERO_POSTER = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/AJ709696.jpg'
 
 useSeoMeta({
