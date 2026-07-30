@@ -72,10 +72,15 @@ export function useReveal() {
           duration,
           ease,
           delay,
+          // Promote to compositor layer only for the duration of the animation.
+          // Set just before the tween plays (onEnter) and released after (onComplete)
+          // to avoid holding GPU memory for every clip-path element simultaneously.
+          onComplete() { el.style.willChange = 'auto' },
           scrollTrigger: {
             trigger: el,
             start:   triggerStart,
             once,
+            onEnter() { el.style.willChange = 'clip-path' },
           },
         },
       )

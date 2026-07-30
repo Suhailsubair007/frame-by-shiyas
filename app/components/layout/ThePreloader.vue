@@ -4,12 +4,29 @@ import { usePreloader }     from '@/composables/usePreloader'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
 
-const { isFirstVisit, complete } = usePreloader()
-const prefersReducedMotion       = useReducedMotion()
+const { isFirstVisit, canWipe, signalAnimationReady, complete } = usePreloader()
+const prefersReducedMotion = useReducedMotion()
 
 const overlayRef = ref<HTMLElement | null>(null)
 const brandRef   = ref<HTMLElement | null>(null)
 const lineRef    = ref<HTMLElement | null>(null)
+
+// Phase 2: cinematic wipe — fires as soon as canWipe becomes true.
+// Brand fades out while the overlay clips upward, revealing the hero.
+function runWipe(): void {
+  gsap.timeline({ onComplete: complete })
+    .to(brandRef.value, {
+      opacity:  0,
+      y:        -8,
+      duration: 0.3,
+      ease:     ANIMATION.EASE.DEFAULT,
+    })
+    .to(overlayRef.value, {
+      clipPath: 'inset(0 0 100% 0)',
+      duration: ANIMATION.DURATION.CINEMATIC,
+      ease:     ANIMATION.EASE.CINEMA,
+    }, '-=0.15')
+}
 
 onMounted(() => {
   if (!isFirstVisit || prefersReducedMotion.value) {
@@ -18,28 +35,30 @@ onMounted(() => {
     return
   }
 
-  const tl = gsap.timeline({ onComplete: complete })
-
-  tl
+  // Phase 1: Minimum brand moment (~1.35 s).
+  // Brand enters and holds — it stays visible until the wipe fires.
+  // signalAnimationReady() is the "animation floor" gate for the wipe.
+  gsap.timeline({ onComplete: signalAnimationReady })
     .fromTo(brandRef.value,
       { opacity: 0, y: 12 },
-      { opacity: 1, y: 0, duration: 0.9, ease: ANIMATION.EASE.EXPO_OUT },
+      { opacity: 1, y: 0, duration: 0.7, ease: ANIMATION.EASE.EXPO_OUT },
       0.1,
     )
     .fromTo(lineRef.value,
       { scaleX: 0, transformOrigin: 'left center' },
-      { scaleX: 1, duration: 1.6, ease: 'power2.inOut' },
-      0.4,
+      { scaleX: 1, duration: 0.9, ease: 'power2.inOut' },
+      0.2,
     )
-    .to({}, { duration: 0.4 })
-    .to(brandRef.value,
-      { opacity: 0, y: -10, duration: 0.35, ease: ANIMATION.EASE.DEFAULT },
-    )
-    .to(overlayRef.value, {
-      clipPath: 'inset(0 0 100% 0)',
-      duration: ANIMATION.DURATION.CINEMATIC,
-      ease:     ANIMATION.EASE.CINEMA,
-    }, '-=0.2')
+    .to({}, { duration: 0.25 })
+
+  // Phase 2: wipe — starts the moment BOTH animation floor AND assets are ready.
+  // On fast connections assets may already be ready by the time Phase 1 ends.
+  // On slow connections the brand holds until assets arrive (max 5 s — enforced in index.vue).
+  const stop = watch(canWipe, (ready) => {
+    if (!ready) return
+    stop()
+    runWipe()
+  }, { immediate: true })
 })
 </script>
 

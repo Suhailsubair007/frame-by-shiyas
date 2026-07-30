@@ -27,7 +27,7 @@ export default defineNuxtConfig({
       dedupe: ['gsap'],
     },
     optimizeDeps: {
-      include: ['gsap', 'gsap/ScrollTrigger', 'gsap/Flip', 'gsap/Observer', 'gsap/CSSPlugin'],
+      include: ['gsap', 'gsap/ScrollTrigger', 'gsap/CSSPlugin'],
     },
   },
 
@@ -94,6 +94,10 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+        // Resource hints — eliminate cold-connection latency for media domains
+        { rel: 'preconnect', href: 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev' },
+        { rel: 'preconnect', href: 'https://res.cloudinary.com' },
+        { rel: 'dns-prefetch', href: 'https://picsum.photos' },
       ],
     },
     pageTransition: false,

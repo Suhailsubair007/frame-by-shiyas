@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import SplitType            from 'split-type'
 import { gsap }             from 'gsap'
+import { ScrollTrigger }    from 'gsap/ScrollTrigger'
 import { usePreloader }     from '@/composables/usePreloader'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
+
+// SplitType type only — the module itself is imported dynamically post-mount
+// so it never blocks the initial component chunk from evaluating.
+interface SPLIT_INSTANCE {
+  revert(): void
+  readonly words?: Element[] | null
+  readonly lines?: HTMLElement[] | null
+}
 
 defineProps<{
   videoSrc?:    string
@@ -14,20 +22,21 @@ defineProps<{
 const { isComplete }       = usePreloader()
 const prefersReducedMotion = useReducedMotion()
 
-// Only one ref needed — the h1 for SplitType
-const titleRef = ref<HTMLElement | null>(null)
+const sectionRef = ref<HTMLElement | null>(null)
+const titleRef   = ref<HTMLElement | null>(null)
 
 const sel = (k: string): string => `[data-hero="${k}"]`
 
-let split:          SplitType | null        = null
-let scrollLineAnim: gsap.core.Tween | null  = null
-let animateInPending = false
-let fallbackTimer:   ReturnType<typeof setTimeout> | null = null
+let split:                  SPLIT_INSTANCE | null       = null
+let scrollLineAnim:         gsap.core.Tween | null      = null
+let scrollIndicatorTrigger: ScrollTrigger | null        = null
+let animateInPending  = false
+let fallbackTimer:    ReturnType<typeof setTimeout> | null = null
 
 onMounted(() => {
   const wasAlreadyComplete = isComplete.value
 
-  nextTick(() => {
+  nextTick(async () => {
     if (wasAlreadyComplete || prefersReducedMotion.value) {
       startScrollLoop()
       return
@@ -38,6 +47,9 @@ onMounted(() => {
 
     const title = titleRef.value
     if (title) {
+      // Dynamic import — deferred until post-mount so SplitType never
+      // blocks the initial component chunk evaluation.
+      const { default: SplitType } = await import('split-type')
       split = new SplitType(title, { types: 'lines,words' })
       split.lines?.forEach(line => {
         line.style.overflow = 'hidden'
@@ -54,11 +66,12 @@ onMounted(() => {
       return
     }
 
+    // Safety valve: animate in after 3 s even if preloader never signals.
     fallbackTimer = setTimeout(() => {
       if (!animateInPending) return
       animateInPending = false
       animateIn()
-    }, 6000)
+    }, 3_000)
   })
 })
 
@@ -127,17 +140,29 @@ function startScrollLoop(): void {
       onRepeat()   { gsap.set(line, { scaleY: 0 }) },
     },
   )
+
+  // Pause the indicator once the hero scrolls out of view —
+  // a repeat:-1 tween running forever off-screen wastes a ticker slot.
+  scrollIndicatorTrigger = ScrollTrigger.create({
+    trigger:     sectionRef.value,
+    start:       'top top',
+    end:         'bottom top',
+    onLeave:     () => scrollLineAnim?.pause(),
+    onEnterBack: () => scrollLineAnim?.resume(),
+  })
 }
 
 onUnmounted(() => {
   split?.revert()
   scrollLineAnim?.kill()
+  scrollIndicatorTrigger?.kill()
   if (fallbackTimer) clearTimeout(fallbackTimer)
 })
 </script>
 
 <template>
   <section
+    ref="sectionRef"
     class="relative h-dvh w-full overflow-hidden"
     aria-label="Hero — Frame by Shiyas"
   >
@@ -147,7 +172,7 @@ onUnmounted(() => {
         v-if="videoSrc"
         :src="videoSrc"
         :poster="videoPoster ?? imageSrc"
-        preload="auto"
+        preload="metadata"
         :threshold="0"
         :eager="true"
         fit="cover"

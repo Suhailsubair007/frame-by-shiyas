@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<{
 
 <template>
   <div class="relative h-full w-full overflow-hidden rounded-2xl">
-    <!-- Cover image -->
+    <!-- Cover image — active card fetched immediately; others deferred until in viewport -->
     <img
       :src="reel.cover"
       :alt="reel.title"
@@ -19,7 +19,8 @@ const props = withDefaults(defineProps<{
       height="1280"
       class="h-full w-full object-cover transition-transform duration-700"
       :class="isActive ? 'scale-100' : 'scale-105'"
-      loading="eager"
+      :loading="isActive ? 'eager' : 'lazy'"
+      decoding="async"
     />
 
     <!-- Gradient veil -->

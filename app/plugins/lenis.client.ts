@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 export default defineNuxtPlugin(() => {
   const lenis = new Lenis({
-    duration: 1.3,
+    duration: 1.1,
     // Exponential easing — fast start, slow settle. Feels physical.
     easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     orientation: 'vertical',
