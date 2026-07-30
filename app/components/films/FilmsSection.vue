@@ -3,14 +3,12 @@ import { useFilms }           from '@/composables/useFilms'
 import { useHorizontalScroll } from '@/composables/useHorizontalScroll'
 import { useReveal }           from '@/composables/useReveal'
 import { ANIMATION }           from '@shared/constants/ANIMATION'
-import { ROUTES }              from '@shared/constants/ROUTES'
 
 const { films }              = useFilms()
 const { fadeUp, clipReveal } = useReveal()
 
 const eyebrowRef = ref<HTMLElement | null>(null)
 const headingRef = ref<HTMLElement | null>(null)
-const ctaRef     = ref<HTMLElement | null>(null)
 const pinRef     = ref<HTMLElement | null>(null)
 const trackRef   = ref<HTMLElement | null>(null)
 
@@ -18,7 +16,7 @@ useHorizontalScroll(pinRef, trackRef)
 
 onMounted(() => {
   nextTick(() => {
-    fadeUp([eyebrowRef.value, ctaRef.value], { stagger: ANIMATION.STAGGER.LOOSE })
+    fadeUp([eyebrowRef.value], {})
     clipReveal(headingRef, { direction: 'up', delay: ANIMATION.DELAY.DEFAULT })
 
     const cards = Array.from(
@@ -55,19 +53,6 @@ onMounted(() => {
           Selected<br /><em>Films.</em>
         </h2>
       </div>
-
-      <div ref="ctaRef" class="hidden opacity-0 md:block">
-        <NuxtLink
-          :to="ROUTES.FILMS"
-          class="group flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted transition-colors duration-300 hover:text-text"
-        >
-          View all
-          <span
-            class="inline-block transition-transform duration-300 group-hover:translate-x-1"
-            aria-hidden="true"
-          >→</span>
-        </NuxtLink>
-      </div>
     </div>
 
     <!-- ── Horizontal scroll reel ───────────────────────────────────────── -->
@@ -89,23 +74,6 @@ onMounted(() => {
           :index="i"
           style="scroll-snap-align: start;"
         />
-
-        <!-- End card — nudge to films page -->
-        <div
-          class="flex shrink-0 flex-col items-start justify-center"
-          style="width: clamp(180px, 16vw, 280px);"
-        >
-          <NuxtLink :to="ROUTES.FILMS" class="group flex flex-col gap-3">
-            <span class="font-mono text-[9px] uppercase tracking-[0.25em] text-text-faint">
-              Full archive
-            </span>
-            <span
-              class="font-display text-4xl font-light italic text-text transition-transform duration-500 ease-out group-hover:translate-x-2 md:text-5xl"
-            >
-              All films →
-            </span>
-          </NuxtLink>
-        </div>
       </div>
     </div>
 

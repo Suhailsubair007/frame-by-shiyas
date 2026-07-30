@@ -3,7 +3,6 @@ import { useCursorState }         from '@/composables/useCursorState'
 import { useReveal }              from '@/composables/useReveal'
 import type { PROJECT_LIST_ITEM } from '@shared/types/Project'
 import { CURSOR_STATE }           from '@shared/enums/CursorState'
-import { ROUTES }                 from '@shared/constants/ROUTES'
 
 const props = defineProps<{
   project: PROJECT_LIST_ITEM
@@ -24,15 +23,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- Wrapper carries the ref for clipReveal; NuxtLink is inside -->
+  <!-- Wrapper carries the ref for clipReveal; hover layer is inside -->
   <div
     ref="wrapRef"
     class="relative overflow-hidden rounded-sm bg-surface/5"
     :class="project.isLandscape ? 'aspect-video' : 'aspect-[3/4]'"
   >
-  <NuxtLink
-    :to="ROUTES.PROJECT(project.slug)"
-    :aria-label="`View ${project.title}`"
+  <div
     class="group absolute inset-0 block"
     @mouseenter="setState(CURSOR_STATE.VIEW)"
     @mouseleave="reset()"
@@ -69,6 +66,6 @@ onMounted(() => {
         {{ project.tagline }}
       </p>
     </div>
-  </NuxtLink>
+  </div>
   </div>
 </template>

@@ -24,18 +24,23 @@ useHead({
 <template>
   <main>
     <HeroSection
+      id="hero"
       :video-src="HERO_VIDEO"
       :video-poster="HERO_POSTER"
     />
 
-    <ReelsSection />
+    <ReelsSection id="reels" />
 
-    <FilmsSection />
+    <!-- Films is a 16:9 landscape rail, and the work on show is vertical.
+         Parked until there is landscape work worth leading with — restore
+         alongside the Films entry in NAVIGATION (shared/constants/META.ts).
+    <FilmsSection id="films" />
+    -->
 
-    <PhotographySection />
+    <PhotographySection id="photography" />
 
-    <AboutSection />
+    <AboutSection id="about" />
 
-    <ContactSection />
+    <ContactSection id="contact" />
   </main>
 </template>

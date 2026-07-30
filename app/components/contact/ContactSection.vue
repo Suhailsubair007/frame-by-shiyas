@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { useReveal }  from '@/composables/useReveal'
+import { useReveal } from '@/composables/useReveal'
+import { useLenis }  from '@/composables/useLenis'
 import { ANIMATION } from '@shared/constants/ANIMATION'
 import { CONTACT }   from '@shared/constants/CONTACT'
-import { META }      from '@shared/constants/META'
-import { NAVIGATION } from '@shared/constants/META'
+import { LAYOUT }    from '@shared/constants/LAYOUT'
+import { META, NAVIGATION } from '@shared/constants/META'
 
 const { fadeUp, clipReveal } = useReveal()
+const { scrollTo }           = useLenis()
+
+function onNavClick(hash: string): void {
+  scrollTo(hash, { offset: -LAYOUT.HEADER_OFFSET })
+}
 
 const eyebrowRef  = ref<HTMLElement | null>(null)
 const headingRef  = ref<HTMLElement | null>(null)
@@ -104,13 +110,14 @@ onMounted(() => {
       </p>
       <nav aria-label="Footer navigation">
         <ul class="flex gap-6">
-          <li v-for="item in NAVIGATION" :key="item.path">
-            <NuxtLink
-              :to="item.path"
+          <li v-for="item in NAVIGATION" :key="item.hash">
+            <a
+              :href="item.hash"
               class="font-mono text-[9px] uppercase tracking-[0.2em] text-text-faint transition-colors duration-300 hover:text-text"
+              @click.prevent="onNavClick(item.hash)"
             >
               {{ item.label }}
-            </NuxtLink>
+            </a>
           </li>
         </ul>
       </nav>

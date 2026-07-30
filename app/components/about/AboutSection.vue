@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { useReveal }  from '@/composables/useReveal'
+import { useReveal } from '@/composables/useReveal'
+import { useLenis }  from '@/composables/useLenis'
 import { ANIMATION } from '@shared/constants/ANIMATION'
-import { ABOUT }      from '@shared/constants/ABOUT'
-import { ROUTES }     from '@shared/constants/ROUTES'
+import { ABOUT }     from '@shared/constants/ABOUT'
+import { LAYOUT }    from '@shared/constants/LAYOUT'
 
 const { fadeUp, clipReveal, parallax } = useReveal()
+const { scrollTo }                     = useLenis()
+
+const CONTACT_HASH = '#contact'
+
+function goToContact(): void {
+  scrollTo(CONTACT_HASH, { offset: -LAYOUT.HEADER_OFFSET })
+}
 
 const imageWrapRef = ref<HTMLElement | null>(null)
 const imageRef     = ref<HTMLElement | null>(null)
@@ -120,16 +128,17 @@ onMounted(() => {
 
         <!-- CTA -->
         <div ref="ctaRef" class="opacity-0">
-          <NuxtLink
-            :to="ROUTES.CONTACT"
+          <a
+            :href="CONTACT_HASH"
             class="group inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted transition-colors duration-300 hover:text-text"
+            @click.prevent="goToContact"
           >
             Work with Shiyas
             <span
               class="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
               aria-hidden="true"
             >→</span>
-          </NuxtLink>
+          </a>
         </div>
 
       </div>

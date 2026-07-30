@@ -2,8 +2,7 @@
 import { usePhotography }   from '@/composables/usePhotography'
 import { useReveal }        from '@/composables/useReveal'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
-import { ROUTES }           from '@shared/constants/ROUTES'
-import { GALLERY_CATEGORY } from '@shared/enums/GalleryCategory'
+import type { GALLERY_CATEGORY } from '@shared/enums/GalleryCategory'
 
 const { filterByCategory } = usePhotography()
 const { fadeUp, clipReveal } = useReveal()
@@ -54,16 +53,6 @@ onMounted(() => {
           :active="activeCategory"
           @change="onFilterChange"
         />
-        <NuxtLink
-          :to="ROUTES.PHOTOGRAPHY"
-          class="group flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted transition-colors duration-300 hover:text-text"
-        >
-          View all
-          <span
-            class="inline-block transition-transform duration-300 group-hover:translate-x-1"
-            aria-hidden="true"
-          >→</span>
-        </NuxtLink>
       </div>
     </div>
 

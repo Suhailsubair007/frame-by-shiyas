@@ -7,10 +7,11 @@ import { useLenis }        from '@/composables/useLenis'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { NAVIGATION, META } from '@shared/constants/META'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
+import { LAYOUT }           from '@shared/constants/LAYOUT'
 
-const { isOpen, close }    = useMenuState()
-const { setState, reset }  = useCursorState()
-const { stop, start }      = useLenis()
+const { isOpen, close }       = useMenuState()
+const { setState, reset }     = useCursorState()
+const { stop, start, scrollTo } = useLenis()
 const prefersReducedMotion = useReducedMotion()
 const route                = useRoute()
 
@@ -87,6 +88,13 @@ watch(isOpen, async (opened) => {
 function setLinkRef(el: Element | ComponentPublicInstance | null, index: number): void {
   if (el instanceof HTMLElement) linksRef.value[index] = el
 }
+
+// Close the overlay and smooth-scroll to the target section. `force` lets Lenis
+// scroll while it is still stopped from the open menu; closing restarts it after.
+function onNavClick(hash: string): void {
+  close()
+  scrollTo(hash, { offset: -LAYOUT.HEADER_OFFSET, force: true })
+}
 </script>
 
 <template>
@@ -111,15 +119,15 @@ function setLinkRef(el: Element | ComponentPublicInstance | null, index: number)
       <ul class="space-y-0" role="list">
         <li
           v-for="(item, i) in NAVIGATION"
-          :key="item.path"
+          :key="item.hash"
           :ref="el => setLinkRef(el, i)"
           class="opacity-0"
         >
-          <NuxtLink
-            :to="item.path"
+          <a
+            :href="item.hash"
             class="group flex items-baseline gap-4 py-1 focus-visible:outline-none md:py-2"
             :tabindex="isOpen ? 0 : -1"
-            @click="close"
+            @click.prevent="onNavClick(item.hash)"
             @mouseenter="setState(CURSOR_STATE.HOVER)"
             @mouseleave="reset"
           >
@@ -132,7 +140,7 @@ function setLinkRef(el: Element | ComponentPublicInstance | null, index: number)
             <span class="relative font-display text-5xl font-light italic leading-none text-text transition-all duration-500 ease-expo group-hover:translate-x-3 group-hover:text-accent sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7.5rem]">
               {{ item.label }}
             </span>
-          </NuxtLink>
+          </a>
         </li>
       </ul>
     </nav>

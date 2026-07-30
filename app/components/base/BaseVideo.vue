@@ -8,6 +8,18 @@ interface VIDEO_SOURCE {
   readonly type?: string
 }
 
+type MEDIA_POSITION = 'center' | 'top' | 'bottom' | 'left' | 'right'
+
+// Which part of the frame survives the crop when the source ratio and the
+// container ratio disagree — e.g. a landscape master inside a portrait frame.
+const POSITION_CLASS: Record<MEDIA_POSITION, string> = {
+  center: 'object-center',
+  top:    'object-top',
+  bottom: 'object-bottom',
+  left:   'object-left',
+  right:  'object-right',
+}
+
 const props = withDefaults(defineProps<{
   src?:         string
   sources?:     VIDEO_SOURCE[]
@@ -19,6 +31,7 @@ const props = withDefaults(defineProps<{
   preload?:     'none' | 'metadata' | 'auto'
   threshold?:   number
   fit?:         'cover' | 'contain'
+  position?:    MEDIA_POSITION
   cursorPlay?:  boolean
   reveal?:      boolean
   // Skip the opacity-0 reveal and show the video immediately (poster never shown)
@@ -31,6 +44,7 @@ const props = withDefaults(defineProps<{
   preload:     'none',
   threshold:   0.25,
   fit:         'cover',
+  position:    'center',
   cursorPlay:  false,
   reveal:      false,
   eager:       false,
@@ -117,7 +131,7 @@ onUnmounted(() => {
       :src="poster"
       alt=""
       aria-hidden="true"
-      class="absolute inset-0 h-full w-full object-cover"
+      :class="['absolute inset-0 h-full w-full object-cover', POSITION_CLASS[position]]"
     />
 
     <video
@@ -130,6 +144,7 @@ onUnmounted(() => {
       :class="[
         'w-full h-full transition-opacity duration-700',
         fit === 'cover' ? 'object-cover' : 'object-contain',
+        POSITION_CLASS[position],
         isReady ? 'opacity-100' : 'opacity-0',
       ]"
       @loadeddata="markReady"

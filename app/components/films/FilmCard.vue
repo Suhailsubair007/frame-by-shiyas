@@ -6,7 +6,6 @@ import type { FILM_LIST_ITEM } from '@shared/types/Film'
 import { FILM_CATEGORY }    from '@shared/enums/FilmCategory'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
 import { CURSOR_STATE }     from '@shared/enums/CursorState'
-import { ROUTES }           from '@shared/constants/ROUTES'
 
 const props = defineProps<{
   film:  FILM_LIST_ITEM
@@ -55,9 +54,7 @@ function onLeave(): void {
 </script>
 
 <template>
-  <NuxtLink
-    :to="ROUTES.FILM(film.slug)"
-    :aria-label="`Watch ${film.title}`"
+  <div
     class="group relative block shrink-0 overflow-hidden rounded-sm"
     style="width: clamp(280px, 52vw, 820px); aspect-ratio: 16/9;"
     data-film-card
@@ -139,5 +136,5 @@ function onLeave(): void {
         </span>
       </div>
     </div>
-  </NuxtLink>
+  </div>
 </template>
