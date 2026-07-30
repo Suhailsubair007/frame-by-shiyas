@@ -16,7 +16,7 @@ defineExpose({ rootRef })
     ref="rootRef"
     to="/"
     class="group flex flex-col leading-none focus-visible:outline-none"
-    aria-label="Frame by Shiyas — Home"
+    aria-label="Muhammed Shiyas — Home"
     @click="close"
     @mouseenter="setState(CURSOR_STATE.HOVER)"
     @mouseleave="reset"

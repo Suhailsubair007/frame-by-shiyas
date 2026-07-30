@@ -1,0 +1,11 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" rx="56" fill="#0a0a0a"/>
+  <rect x="0.5" y="0.5" width="255" height="255" rx="55.5" stroke="#ffffff" stroke-opacity="0.14"/>
+  <g stroke="#f5f4f2" stroke-opacity="0.82" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M48 92 L48 48 L92 48"/>
+    <path d="M164 48 L208 48 L208 92"/>
+    <path d="M208 164 L208 208 L164 208"/>
+    <path d="M92 208 L48 208 L48 164"/>
+  </g>
+  <text x="129" y="139" font-family="Georgia, 'Times New Roman', 'Times', serif" font-style="italic" font-weight="500" font-size="128" fill="#f5f4f2" text-anchor="middle" dominant-baseline="central">S</text>
+</svg>
