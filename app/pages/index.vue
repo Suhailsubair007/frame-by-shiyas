@@ -3,7 +3,7 @@ import { META } from '@shared/constants/META'
 
 definePageMeta({ layout: 'default' })
 
-const HERO_VIDEO  = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/15086082_3840_2160_30fps.mp4'
+const HERO_VIDEO  = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/15086082_3840_2160_30fps%20(1).mp4'
 const HERO_POSTER = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/AJ709696.jpg'
 
 useSeoMeta({
