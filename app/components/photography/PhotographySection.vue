@@ -37,7 +37,7 @@ onMounted(() => {
           ref="eyebrowRef"
           class="mb-4 font-mono text-[9px] uppercase tracking-[0.3em] text-text-faint opacity-0"
         >
-          02 — Photography
+          03 — Photography
         </p>
         <h2
           ref="headingRef"

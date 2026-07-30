@@ -39,7 +39,7 @@ onMounted(() => {
         ref="eyebrowRef"
         class="mb-6 font-mono text-[9px] uppercase tracking-[0.3em] text-text-faint opacity-0"
       >
-        04 — Contact
+        05 — Contact
       </p>
 
       <!-- Heading -->
