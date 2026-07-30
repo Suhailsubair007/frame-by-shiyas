@@ -97,12 +97,12 @@ onMounted(() => {
         >
           <NuxtLink :to="ROUTES.FILMS" class="group flex flex-col gap-3">
             <span class="font-mono text-[9px] uppercase tracking-[0.25em] text-text-faint">
-              All films
+              Full archive
             </span>
             <span
               class="font-display text-4xl font-light italic text-text transition-transform duration-500 ease-out group-hover:translate-x-2 md:text-5xl"
             >
-              See more →
+              All films →
             </span>
           </NuxtLink>
         </div>

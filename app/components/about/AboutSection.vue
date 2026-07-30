@@ -124,7 +124,7 @@ onMounted(() => {
             :to="ROUTES.CONTACT"
             class="group inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted transition-colors duration-300 hover:text-text"
           >
-            Begin a project
+            Work with Shiyas
             <span
               class="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
               aria-hidden="true"

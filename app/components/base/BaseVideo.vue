@@ -39,18 +39,25 @@ const emit = defineEmits<{
   ready: []
 }>()
 
-const videoRef  = ref<HTMLVideoElement | null>(null)
-const isReady   = ref(false)
-const isPlaying = ref(false)
+const videoRef      = ref<HTMLVideoElement | null>(null)
+const isReady       = ref(false)
+const isPlaying     = ref(false)
+let   fallbackTimer = 0
 const { setState, reset } = useCursorState()
 
-// Vue's :muted binding sets the HTML attribute, not the DOM property.
-// Browsers check the DOM property for autoplay permission, so we must set
-// it directly after mount — otherwise autoplay is silently blocked.
+// Vue's :muted binding sets the HTML attribute but not the DOM property.
+// We also set the DOM property directly, since browsers check it for autoplay.
 onMounted(() => {
-  if (videoRef.value && props.muted) {
-    videoRef.value.muted = true
-  }
+  const el = videoRef.value
+  if (!el) return
+  if (props.muted) el.muted = true
+
+  // Fallback: if the video hasn't fired any ready event within 5 s
+  // (e.g. very large file, slow connection), show it anyway so the page
+  // isn't stuck on a black screen / frozen poster.
+  fallbackTimer = window.setTimeout(() => {
+    if (!isReady.value) markReady()
+  }, 5000)
 })
 
 // ── Intersection-observer-driven play / pause ────────────────────────────────
@@ -88,7 +95,10 @@ function markReady(): void {
   emit('ready')
 }
 
-onUnmounted(stop)
+onUnmounted(() => {
+  stop()
+  window.clearTimeout(fallbackTimer)
+})
 </script>
 
 <template>
@@ -110,6 +120,7 @@ onUnmounted(stop)
     <video
       ref="videoRef"
       :loop="loop"
+      :muted="muted"
       :playsinline="playsinline"
       :preload="preload"
       :poster="poster"

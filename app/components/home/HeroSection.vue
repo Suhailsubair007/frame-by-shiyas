@@ -147,7 +147,7 @@ onUnmounted(() => {
 <template>
   <section
     ref="sectionRef"
-    class="relative flex h-dvh w-full flex-col overflow-hidden"
+    class="relative h-dvh w-full overflow-hidden"
     aria-label="Hero — Frame by Shiyas"
   >
     <!-- ── Background — video, image, or gradient ───────────────────── -->
@@ -203,7 +203,7 @@ onUnmounted(() => {
     </div>
 
     <!-- ── Bottom content ─────────────────────────────────────────────── -->
-    <div class="relative mt-auto flex items-end justify-between px-6 pb-16 md:px-10 md:pb-20">
+    <div class="absolute bottom-20 left-6 right-6 flex items-end justify-between md:bottom-28 md:left-10 md:right-10">
 
       <!-- Left — headline -->
       <div>
@@ -216,7 +216,7 @@ onUnmounted(() => {
 
         <h1
           ref="titleRef"
-          class="font-display font-normal italic leading-[0.88] text-text"
+          class="font-display font-normal italic leading-[0.9] text-text"
           style="font-size: clamp(52px, 7.5vw, 130px);"
         >
           Visual<br />Storyteller
@@ -229,8 +229,8 @@ onUnmounted(() => {
         class="hidden flex-col items-end gap-1.5 pb-1 md:flex"
         aria-hidden="true"
       >
+        <span class="font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted">Videographer &amp; Editor</span>
         <span class="font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted">Photographer</span>
-        <span class="font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted">Videographer</span>
       </div>
     </div>
 

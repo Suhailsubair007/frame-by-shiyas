@@ -44,7 +44,7 @@ onMounted(() => {
           class="font-display font-normal leading-[0.88] text-text"
           style="font-size: clamp(48px, 7vw, 120px);"
         >
-          Still<br /><em>Images.</em>
+          Through<br /><em>the Lens.</em>
         </h2>
       </div>
 

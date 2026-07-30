@@ -125,7 +125,7 @@ onUnmounted(() => {
         class="font-display font-normal leading-[0.88] text-text"
         style="font-size: clamp(40px, 6vw, 100px);"
       >
-        Short<br /><em>Stories.</em>
+        Short<br /><em>Reels.</em>
       </h2>
     </div>
 
@@ -137,7 +137,7 @@ onUnmounted(() => {
     <div
       ref="containerRef"
       class="relative mx-auto"
-      style="height: clamp(380px, 60vh, 640px);"
+      style="height: clamp(480px, 78vh, 820px);"
     >
       <div
         v-for="(reel, i) in REELS"
