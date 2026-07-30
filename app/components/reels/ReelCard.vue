@@ -10,16 +10,25 @@ const props = withDefaults(defineProps<{
 
 const videoRef = ref<HTMLVideoElement | null>(null)
 
+const START_OFFSET = 2
+
 watch(() => props.isActive, (active) => {
   const v = videoRef.value
   if (!v) return
   if (active) {
+    v.currentTime = START_OFFSET
     v.play().catch(() => {})
   } else {
     v.pause()
-    v.currentTime = 0
+    v.currentTime = START_OFFSET
   }
 }, { immediate: false })
+
+function onLoadedMetadata(): void {
+  const v = videoRef.value
+  if (!v) return
+  v.currentTime = START_OFFSET
+}
 </script>
 
 <template>
@@ -35,6 +44,7 @@ watch(() => props.isActive, (active) => {
       playsinline
       preload="metadata"
       aria-hidden="true"
+      @loadedmetadata="onLoadedMetadata"
     />
 
     <!-- Gradient veil -->
