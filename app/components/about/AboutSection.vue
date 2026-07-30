@@ -90,7 +90,7 @@ onMounted(() => {
           <p
             v-for="(line, i) in ABOUT.BIO"
             :key="i"
-            :ref="el => { bioRefs.value[i] = el as HTMLElement | null }"
+            :ref="el => { bioRefs[i] = el as HTMLElement | null }"
             class="max-w-[42ch] font-sans text-base font-light leading-relaxed text-text-muted opacity-0"
           >
             {{ line }}

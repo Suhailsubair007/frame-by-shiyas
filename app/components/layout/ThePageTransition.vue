@@ -87,7 +87,12 @@ defineExpose({ isAnimating: readonly(isAnimating) })
       @enter="onEnter"
       @after-enter="onAfterEnter"
     >
-      <slot :key="route.path" />
+      <!-- Keyed wrapper guarantees Transition always sees a single element child.
+           Without it, RouterView can resolve to a comment node mid-swap, which
+           Transition cannot animate ("non-element root node" warning). -->
+      <div :key="route.path">
+        <slot />
+      </div>
     </Transition>
   </div>
 </template>

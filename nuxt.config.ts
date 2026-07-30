@@ -19,6 +19,16 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    // GSAP ships gsap-core and each plugin (ScrollTrigger, CSSPlugin, …) as separate
+    // entry points. Without deduping, Vite can bundle more than one copy of gsap-core,
+    // so plugins register on a different instance than the one components import —
+    // surfacing as "Missing plugin? gsap.registerPlugin()" on opacity/transform tweens.
+    resolve: {
+      dedupe: ['gsap'],
+    },
+    optimizeDeps: {
+      include: ['gsap', 'gsap/ScrollTrigger', 'gsap/Flip', 'gsap/Observer', 'gsap/CSSPlugin'],
+    },
   },
 
   alias: {
