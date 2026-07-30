@@ -49,7 +49,7 @@ onMounted(() => {
         </p>
         <h2
           ref="headingRef"
-          class="font-display font-light leading-[0.88] text-text"
+          class="font-display font-normal leading-[0.88] text-text"
           style="font-size: clamp(48px, 7vw, 120px);"
         >
           Selected<br /><em>Films.</em>

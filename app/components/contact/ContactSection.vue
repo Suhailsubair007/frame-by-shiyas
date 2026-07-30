@@ -45,7 +45,7 @@ onMounted(() => {
       <!-- Heading -->
       <h2
         ref="headingRef"
-        class="mb-8 font-display font-light leading-[0.88] text-text"
+        class="mb-8 font-display font-normal leading-[0.88] text-text"
         style="font-size: clamp(52px, 9vw, 144px);"
       >
         {{ CONTACT.HEADING_TOP }}<br />
@@ -64,7 +64,7 @@ onMounted(() => {
       <a
         ref="emailRef"
         :href="`mailto:${CONTACT.EMAIL}`"
-        class="group relative mb-16 inline-block w-fit overflow-hidden font-display font-light italic leading-none text-text opacity-0"
+        class="group relative mb-16 inline-block w-fit overflow-hidden font-display font-normal italic leading-none text-text opacity-0"
         style="font-size: clamp(22px, 3.5vw, 52px);"
         :aria-label="`Email ${CONTACT.EMAIL}`"
       >

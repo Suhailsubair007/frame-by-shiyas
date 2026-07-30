@@ -124,7 +124,7 @@ function onLeave(): void {
       </p>
 
       <h3
-        class="font-display font-light italic leading-tight text-text transition-transform duration-500 ease-out group-hover:-translate-y-1"
+        class="font-display font-normal italic leading-tight text-text transition-transform duration-500 ease-out group-hover:-translate-y-1"
         style="font-size: clamp(22px, 3.2vw, 50px);"
       >
         {{ film.title }}

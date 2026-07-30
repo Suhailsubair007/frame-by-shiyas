@@ -78,7 +78,7 @@ onMounted(() => {
         <!-- Heading -->
         <h2
           ref="headingRef"
-          class="mb-10 font-display font-light leading-[0.9] text-text"
+          class="mb-10 font-display font-normal leading-[0.9] text-text"
           style="font-size: clamp(40px, 5.5vw, 90px);"
         >
           {{ ABOUT.HEADING_TOP }}<br />
@@ -107,7 +107,7 @@ onMounted(() => {
             :key="stat.label"
           >
             <p
-              class="font-display font-light leading-none text-text"
+              class="font-display font-normal leading-none text-text"
               style="font-size: clamp(28px, 3.5vw, 52px);"
             >
               {{ stat.value }}

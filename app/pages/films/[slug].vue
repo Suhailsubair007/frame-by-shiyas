@@ -70,7 +70,7 @@ onMounted(() => {
 
       <h1
         ref="headingRef"
-        class="mb-6 font-display font-light leading-[0.9] text-text"
+        class="mb-6 font-display font-normal leading-[0.9] text-text"
         style="font-size: clamp(40px, 6vw, 100px);"
       >
         {{ film.title }}<br />

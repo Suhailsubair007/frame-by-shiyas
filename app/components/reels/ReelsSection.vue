@@ -122,7 +122,7 @@ onUnmounted(() => {
       </p>
       <h2
         ref="headingRef"
-        class="font-display font-light leading-[0.88] text-text"
+        class="font-display font-normal leading-[0.88] text-text"
         style="font-size: clamp(40px, 6vw, 100px);"
       >
         Short<br /><em>Stories.</em>

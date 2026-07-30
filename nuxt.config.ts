@@ -29,23 +29,23 @@ export default defineNuxtConfig({
   fonts: {
     families: [
       {
-        name: 'Cormorant Garamond',
+        name: 'Playfair Display',
         provider: 'google',
-        weights: [300, 400, 500, 600],
+        weights: [400, 500, 600, 700],
         styles: ['normal', 'italic'],
         subsets: ['latin'],
       },
       {
-        name: 'DM Sans',
+        name: 'Inter',
         provider: 'google',
         weights: [300, 400, 500],
         styles: ['normal'],
         subsets: ['latin'],
       },
       {
-        name: 'DM Mono',
+        name: 'Space Mono',
         provider: 'google',
-        weights: [300, 400],
+        weights: [400],
         styles: ['normal'],
         subsets: ['latin'],
       },

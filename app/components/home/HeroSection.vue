@@ -215,7 +215,7 @@ onUnmounted(() => {
 
         <h1
           ref="titleRef"
-          class="font-display font-light italic leading-[0.92] text-text"
+          class="font-display font-normal italic leading-[0.92] text-text"
           style="font-size: clamp(64px, 9.5vw, 158px);"
         >
           Visual<br />Storyteller
