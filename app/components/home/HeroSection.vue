@@ -46,7 +46,8 @@ onMounted(() => {
     // Fresh load with preloader still running — hide everything until it finishes.
     animateInPending = true
 
-    gsap.set([videoWrapRef.value, rolesRef.value, scrollRef.value, eyebrowRef.value, indexRef.value], {
+    // Background is covered by the preloader overlay — only hide text elements.
+    gsap.set([rolesRef.value, scrollRef.value, eyebrowRef.value, indexRef.value], {
       opacity: 0,
     })
 
@@ -78,7 +79,7 @@ watch(isComplete, (done) => {
 function animateIn(): void {
   if (prefersReducedMotion.value) {
     gsap.set(
-      [videoWrapRef.value, rolesRef.value, scrollRef.value, eyebrowRef.value, indexRef.value],
+      [rolesRef.value, scrollRef.value, eyebrowRef.value, indexRef.value],
       { opacity: 1 },
     )
     gsap.set(split?.words ?? [], { y: 0 })
@@ -89,11 +90,6 @@ function animateIn(): void {
   const tl = gsap.timeline({ delay: 0.05, onComplete: startScrollLoop })
 
   tl
-    // Video / gradient background
-    .to(videoWrapRef.value, {
-      opacity: 1, duration: ANIMATION.DURATION.CINEMATIC, ease: 'none',
-    }, 0)
-
     // Eyebrow label
     .to(eyebrowRef.value, {
       opacity: 1, duration: ANIMATION.DURATION.SLOW, ease: ANIMATION.EASE.EXPO_OUT,
