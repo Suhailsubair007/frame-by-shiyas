@@ -16,7 +16,7 @@ useSeoMeta({
 <template>
   <main>
     <HeroSection
-      image-src="https://res.cloudinary.com/duzyrjr0g/image/upload/v1747719310/samples/two-ladies.jpg"
+      image-src="https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/AJ709954.jpg"
     />
 
     <FilmsSection />
