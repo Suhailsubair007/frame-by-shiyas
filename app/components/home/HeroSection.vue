@@ -199,6 +199,13 @@ onUnmounted(() => {
       />
     </div>
 
+    <!-- ── Bottom section fade — dissolves hero into the next section ── -->
+    <div
+      class="absolute inset-x-0 bottom-0 h-64 pointer-events-none"
+      style="background: linear-gradient(to bottom, transparent, oklch(4% 0 0));"
+      aria-hidden="true"
+    />
+
     <!-- ── Viewfinder corner brackets ────────────────────────── -->
     <div aria-hidden="true">
       <!-- top-left -->
@@ -241,7 +248,7 @@ onUnmounted(() => {
           class="font-display font-normal italic leading-[0.87] text-text"
           style="font-size: clamp(46px, 6.5vw, 112px);"
         >
-          Visual<br />Storyteller
+          Moments <span class="font-sans font-light italic">&amp;</span><br />Motion.
         </h1>
 
         <div

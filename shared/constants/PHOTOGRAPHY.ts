@@ -2,14 +2,8 @@ import type { PROJECT_LIST_ITEM } from '@shared/types/Project'
 import type { GALLERY_IMAGE }    from '@shared/types/Project'
 import { GALLERY_CATEGORY }      from '@shared/enums/GalleryCategory'
 
-// Placeholder cover images from Picsum Photos (seeded — consistent per project).
-// isLandscape drives aspect ratio: true → 16:9, false → 3:4 portrait.
-// Swap src paths for real production assets when media is delivered.
-
-function cover(seed: string, alt: string, landscape: boolean): GALLERY_IMAGE {
-  const w = landscape ? 1920 : 1080
-  const h = landscape ? 1080 : 1350
-  return { id: `${seed}-cover`, src: `https://picsum.photos/seed/${seed}/${w}/${h}`, alt, width: w, height: h }
+function photo(file: string, alt: string): GALLERY_IMAGE {
+  return { id: file, src: `/images/${file}`, alt, width: 1080, height: 1350 }
 }
 
 export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
@@ -18,9 +12,9 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Golden Hour',
     slug:        'golden-hour',
     category:    GALLERY_CATEGORY.WEDDING,
-    coverImage:  cover('golden-hour', 'Golden Hour — Wedding', true),
+    coverImage:  photo('P1.webp', 'Golden Hour — Wedding'),
     isFeatured:  true,
-    isLandscape: true,
+    isLandscape: false,
     tagline:     'Light as witness.',
   },
   {
@@ -28,7 +22,7 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Reverie',
     slug:        'reverie',
     category:    GALLERY_CATEGORY.PORTRAIT,
-    coverImage:  cover('reverie-portrait', 'Reverie — Portrait', false),
+    coverImage:  photo('P2.webp', 'Reverie — Portrait'),
     isFeatured:  true,
     isLandscape: false,
     tagline:     'Between waking and dreaming.',
@@ -38,7 +32,7 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Concrete',
     slug:        'concrete',
     category:    GALLERY_CATEGORY.STREET,
-    coverImage:  cover('concrete-street', 'Concrete — Street', false),
+    coverImage:  photo('P3.webp', 'Concrete — Street'),
     isFeatured:  false,
     isLandscape: false,
   },
@@ -47,9 +41,9 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Fragments',
     slug:        'fragments',
     category:    GALLERY_CATEGORY.EDITORIAL,
-    coverImage:  cover('fragments-editorial', 'Fragments — Editorial', true),
+    coverImage:  photo('P4.webp', 'Fragments — Editorial'),
     isFeatured:  false,
-    isLandscape: true,
+    isLandscape: false,
     tagline:     'A frame within a frame.',
   },
   {
@@ -57,9 +51,9 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Dusk',
     slug:        'dusk',
     category:    GALLERY_CATEGORY.TRAVEL,
-    coverImage:  cover('dusk-travel', 'Dusk — Travel', true),
+    coverImage:  photo('P5.webp', 'Dusk — Travel'),
     isFeatured:  false,
-    isLandscape: true,
+    isLandscape: false,
     tagline:     'The hour that belongs to no one.',
   },
   {
@@ -67,7 +61,7 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Bloom',
     slug:        'bloom-portrait',
     category:    GALLERY_CATEGORY.LIFESTYLE,
-    coverImage:  cover('bloom-lifestyle', 'Bloom — Lifestyle', false),
+    coverImage:  photo('P6.webp', 'Bloom — Lifestyle'),
     isFeatured:  false,
     isLandscape: false,
   },
@@ -76,7 +70,7 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Veil',
     slug:        'veil',
     category:    GALLERY_CATEGORY.WEDDING,
-    coverImage:  cover('veil-wedding', 'Veil — Wedding', false),
+    coverImage:  photo('P7.webp', 'Veil — Wedding'),
     isFeatured:  false,
     isLandscape: false,
     tagline:     'What the veil keeps sacred.',
@@ -86,9 +80,9 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Form',
     slug:        'form',
     category:    GALLERY_CATEGORY.COMMERCIAL,
-    coverImage:  cover('form-commercial', 'Form — Commercial', true),
+    coverImage:  photo('P8.webp', 'Form — Commercial'),
     isFeatured:  true,
-    isLandscape: true,
+    isLandscape: false,
     tagline:     'Design stripped to its essence.',
   },
   {
@@ -96,7 +90,7 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Horizon',
     slug:        'horizon',
     category:    GALLERY_CATEGORY.TRAVEL,
-    coverImage:  cover('horizon-travel', 'Horizon — Travel', false),
+    coverImage:  photo('P9.webp', 'Horizon — Travel'),
     isFeatured:  false,
     isLandscape: false,
   },
@@ -105,9 +99,9 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Presence',
     slug:        'presence',
     category:    GALLERY_CATEGORY.PORTRAIT,
-    coverImage:  cover('presence-portrait', 'Presence — Portrait', true),
+    coverImage:  photo('P10.webp', 'Presence — Portrait'),
     isFeatured:  false,
-    isLandscape: true,
+    isLandscape: false,
     tagline:     'To be seen is to exist.',
   },
   {
@@ -115,16 +109,16 @@ export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
     title:       'Still',
     slug:        'still',
     category:    GALLERY_CATEGORY.EDITORIAL,
-    coverImage:  cover('still-editorial', 'Still — Editorial', true),
+    coverImage:  photo('P11.webp', 'Still — Editorial'),
     isFeatured:  false,
-    isLandscape: true,
+    isLandscape: false,
   },
   {
     id:          'ph12',
     title:       'Drift',
     slug:        'drift',
     category:    GALLERY_CATEGORY.STREET,
-    coverImage:  cover('drift-street', 'Drift — Street', false),
+    coverImage:  photo('P12.webp', 'Drift — Street'),
     isFeatured:  false,
     isLandscape: false,
     tagline:     'The city never sleeps, only shifts.',
