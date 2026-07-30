@@ -34,12 +34,12 @@ onMounted(() => {
     @mouseenter="setState(CURSOR_STATE.VIEW)"
     @mouseleave="reset()"
   >
-    <!-- Cover image — external placeholder, plain <img> to bypass IPX proxy -->
     <img
       :src="project.coverImage.src"
       :alt="project.coverImage.alt"
       :width="project.coverImage.width"
       :height="project.coverImage.height"
+      sizes="(max-width: 767px) calc(100vw - 48px), calc(50vw - 52px)"
       class="h-full w-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
       loading="lazy"
       decoding="async"
