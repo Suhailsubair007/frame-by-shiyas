@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{
 
 const videoRef = ref<HTMLVideoElement | null>(null)
 
-const START_OFFSET = 2
+const START_OFFSET = 3
 
 watch(() => props.isActive, (active) => {
   const v = videoRef.value
