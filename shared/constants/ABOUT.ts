@@ -18,7 +18,7 @@ export const ABOUT = {
 
   PORTRAIT: {
     id:     'about-portrait',
-    src:    'https://picsum.photos/seed/shiyas-portrait/800/1000',
+    src:    'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/pexels-camerongawn-14221548.jpg',
     alt:    'Muhammed Shiyas — Photographer & Filmmaker',
     width:  800,
     height: 1000,
