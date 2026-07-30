@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useLenis } from '@/composables/useLenis'
 import { ANIMATION } from '@shared/constants/ANIMATION'
@@ -55,6 +56,7 @@ function onEnter(el: Element, done: () => void): void {
       gsap.set(curtain, { yPercent: 100 })
       isAnimating.value = false
       start()
+      ScrollTrigger.refresh()
       done()
     },
   })

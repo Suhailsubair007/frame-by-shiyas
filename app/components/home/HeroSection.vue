@@ -12,9 +12,9 @@ const props = defineProps<{
   videoPoster?: string
 }>()
 
-const { isComplete }       = usePreloader()
-const prefersReducedMotion = useReducedMotion()
-const { setState, reset }  = useCursorState()
+const { isComplete, isFirstVisit } = usePreloader()
+const prefersReducedMotion         = useReducedMotion()
+const { setState, reset }          = useCursorState()
 
 const sectionRef   = ref<HTMLElement | null>(null)
 const videoWrapRef = ref<HTMLElement | null>(null)
@@ -27,19 +27,23 @@ const indexRef     = ref<HTMLElement | null>(null)
 let split: SplitType | null = null
 let scrollLineAnim: gsap.core.Tween | null = null
 
-// ── Set initial hidden states and prepare splits on mount ──────────────────
-// Done here (not in animateIn) so elements are invisible
-// before the preloader finishes — prevents any flash.
+// ── On mount: decide whether to prepare the cinematic entry or show content ──
 onMounted(() => {
   nextTick(() => {
-    if (prefersReducedMotion.value) return
+    if (!isFirstVisit) {
+      // Returning visit (navigated here from another page) — content shows
+      // immediately; the page-transition curtain already handled the reveal.
+      startScrollLoop()
+      return
+    }
 
-    // Hide elements that animate in later
+    // First visit — preloader is playing. Hide everything until it finishes.
+    if (prefersReducedMotion.value) return  // animateIn() will reveal immediately
+
     gsap.set([videoWrapRef.value, rolesRef.value, scrollRef.value, eyebrowRef.value, indexRef.value], {
       opacity: 0,
     })
 
-    // Split and hide title words immediately
     const title = titleRef.value
     if (title) {
       split = new SplitType(title, { types: 'words' })
@@ -52,15 +56,10 @@ onMounted(() => {
   })
 })
 
-// ── Run entry animation once preloader signals complete ────────────────────
+// ── Run cinematic entry once — only after the preloader, on the first visit ──
 watch(isComplete, (done) => {
   if (!done) return
   nextTick(() => animateIn())
-})
-
-// Returning visitors: preloader skips immediately — fire on mount if already done
-onMounted(() => {
-  if (isComplete.value) nextTick(() => animateIn())
 })
 
 function animateIn(): void {
