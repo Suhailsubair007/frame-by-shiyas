@@ -97,7 +97,6 @@ export default defineNuxtConfig({
         // Resource hints — eliminate cold-connection latency for media domains
         { rel: 'preconnect', href: 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev' },
         { rel: 'preconnect', href: 'https://res.cloudinary.com' },
-        { rel: 'dns-prefetch', href: 'https://picsum.photos' },
       ],
     },
     pageTransition: false,

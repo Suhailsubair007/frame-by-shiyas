@@ -7,20 +7,34 @@ const props = withDefaults(defineProps<{
 }>(), {
   isActive: false,
 })
+
+const videoRef = ref<HTMLVideoElement | null>(null)
+
+watch(() => props.isActive, (active) => {
+  const v = videoRef.value
+  if (!v) return
+  if (active) {
+    v.play().catch(() => {})
+  } else {
+    v.pause()
+    v.currentTime = 0
+  }
+}, { immediate: false })
 </script>
 
 <template>
   <div class="relative h-full w-full overflow-hidden rounded-2xl">
-    <!-- Cover image — active card fetched immediately; others deferred until in viewport -->
-    <img
-      :src="reel.cover"
-      :alt="reel.title"
-      width="720"
-      height="1280"
+    <!-- Video — preload metadata so the first frame is visible on inactive cards -->
+    <video
+      ref="videoRef"
+      :src="reel.videoUrl"
       class="h-full w-full object-cover transition-transform duration-700"
       :class="isActive ? 'scale-100' : 'scale-105'"
-      :loading="isActive ? 'eager' : 'lazy'"
-      decoding="async"
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
     />
 
     <!-- Gradient veil -->
@@ -36,7 +50,6 @@ const props = withDefaults(defineProps<{
       :class="isActive ? 'h-14 w-14 opacity-80' : 'h-10 w-10 opacity-40'"
       aria-hidden="true"
     >
-      <!-- Triangle play icon -->
       <svg
         :class="isActive ? 'h-5 w-5 translate-x-0.5' : 'h-3.5 w-3.5 translate-x-px'"
         viewBox="0 0 16 16"
