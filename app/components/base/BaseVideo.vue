@@ -72,6 +72,14 @@ function onCanPlay(): void {
   emit('ready')
 }
 
+// loadeddata fires as soon as the first frame is decoded — much earlier than
+// canplaythrough (which waits until the full stream can play without rebuffering).
+// For a large 4K hero video canplaythrough may never fire on slow connections.
+function onLoadedData(): void {
+  isReady.value = true
+  emit('ready')
+}
+
 onUnmounted(stop)
 </script>
 
@@ -103,6 +111,7 @@ onUnmounted(stop)
         fit === 'cover' ? 'object-cover' : 'object-contain',
         isReady ? 'opacity-100' : 'opacity-0',
       ]"
+      @loadeddata="onLoadedData"
       @canplaythrough="onCanPlay"
     >
       <!-- Multiple sources for resolution/format fallbacks -->

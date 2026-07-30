@@ -157,6 +157,7 @@ onUnmounted(() => {
         :src="videoSrc"
         :poster="videoPoster ?? imageSrc"
         preload="auto"
+        :threshold="0"
         fit="cover"
         class="h-full w-full"
       />
