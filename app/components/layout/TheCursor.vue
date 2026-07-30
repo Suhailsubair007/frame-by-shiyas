@@ -19,18 +19,17 @@ const isActive = ref(false)
 let xTo: ReturnType<typeof gsap.quickTo>
 let yTo: ReturnType<typeof gsap.quickTo>
 
-// watchEffect tracks hasPointer + prefersReducedMotion reactively.
-// async/await nextTick defers past both VueUse's SSR-safe media query update
-// and the v-if re-render that places dotRef/ringRef into the DOM.
-watchEffect(async () => {
-  if (!hasPointer.value || prefersReducedMotion.value) return
-  if (xTo) return  // already initialised — guard against re-entry
-
-  await nextTick()
+// Idempotent and safe to re-attempt. hasPointer is a client-only media query, so
+// the v-if below only puts dotRef/ringRef in the DOM a beat after this first runs.
+// Reporting failure instead of giving up matters: if xTo is never assigned, the
+// quickTo calls below become silent no-ops and the ring stays pinned at its CSS
+// origin — the top-left corner.
+function initFollow(): boolean {
+  if (xTo) return true
 
   const ring = ringRef.value
   const dot  = dotRef.value
-  if (!ring || !dot) return
+  if (!ring || !dot) return false
 
   // Position off-screen initially so there's no flash at (0,0)
   gsap.set([ring, dot], { x: -200, y: -200 })
@@ -40,7 +39,19 @@ watchEffect(async () => {
 
   document.documentElement.classList.add('has-custom-cursor')
   hide()
-})
+  return true
+}
+
+// flush: 'post' runs the callback after the DOM patch, so the refs exist on the
+// same pass where hasPointer first flips true.
+watch(
+  [hasPointer, prefersReducedMotion],
+  () => {
+    if (!hasPointer.value || prefersReducedMotion.value) return
+    initFollow()
+  },
+  { immediate: true, flush: 'post' },
+)
 
 onUnmounted(() => {
   document.documentElement.classList.remove('has-custom-cursor')
@@ -48,6 +59,11 @@ onUnmounted(() => {
 
 useEventListener('mousemove', (e: MouseEvent) => {
   if (!hasPointer.value || prefersReducedMotion.value) return
+
+  // The watch above can fire before Teleport patches the refs into the DOM, so
+  // retry here — the first real mousemove is the latest point at which the
+  // cursor markup is guaranteed to exist.
+  if (!initFollow()) return
 
   const dot = dotRef.value
   if (!dot) return
