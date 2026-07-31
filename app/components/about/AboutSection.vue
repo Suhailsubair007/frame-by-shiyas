@@ -45,12 +45,12 @@ onMounted(() => {
     <div class="mx-6 h-px bg-border md:mx-10" aria-hidden="true" />
 
     <!-- Main editorial grid -->
-    <div class="grid min-h-screen grid-cols-1 md:grid-cols-[55%_1fr]">
+    <div class="grid grid-cols-1 md:grid-cols-[55%_1fr]">
 
       <!-- ── Left: Portrait image ─────────────────────────────────────── -->
       <div
         ref="imageWrapRef"
-        class="relative aspect-[4/5] overflow-hidden md:aspect-auto"
+        class="relative aspect-[2/3] overflow-hidden"
       >
         <img
           ref="imageRef"
@@ -65,7 +65,7 @@ onMounted(() => {
 
         <!-- Location caption — bottom left -->
         <p
-          class="absolute bottom-6 left-6 font-mono text-[9px] uppercase tracking-[0.25em] text-text-faint md:bottom-8 md:left-8"
+          class="absolute bottom-6 left-6 font-mono text-[13px] font-semibold uppercase tracking-[0.25em] text-text-faint md:bottom-8 md:left-8"
           aria-hidden="true"
         >
           {{ ABOUT.LOCATION }}
@@ -73,7 +73,7 @@ onMounted(() => {
       </div>
 
       <!-- ── Right: Content ──────────────────────────────────────────── -->
-      <div class="flex flex-col justify-center px-8 py-20 md:px-12 md:py-24 lg:px-16">
+      <div class="flex flex-col justify-center px-8 py-12 md:px-12 md:py-14 lg:px-16">
 
         <!-- Eyebrow -->
         <p
@@ -115,12 +115,12 @@ onMounted(() => {
             :key="stat.label"
           >
             <p
-              class="font-display font-normal leading-none text-text"
+              class="font-display font-bold leading-none text-text whitespace-pre-line"
               style="font-size: clamp(28px, 3.5vw, 52px);"
             >
               {{ stat.value }}
             </p>
-            <p class="mt-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-text-faint">
+            <p class="mt-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-text-faint">
               {{ stat.label }}
             </p>
           </div>

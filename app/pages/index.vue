@@ -58,7 +58,7 @@ onMounted(() => {
 
     <ReelsSection id="reels" />
 
-    <FilmsSection id="films" />
+    <!-- <FilmsSection id="films" /> -->
 
     <PhotographySection id="photography" />
 
