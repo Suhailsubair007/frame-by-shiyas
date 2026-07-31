@@ -3,6 +3,7 @@
 const _isComplete = ref(false)
 const _animDone   = ref(false)
 const _assetsDone = ref(false)
+const _progress   = ref(0)
 
 // Wipe fires when BOTH conditions are satisfied — whichever is slower.
 // Using computed so the signal propagates reactively without manual tryWipe calls.
@@ -27,18 +28,25 @@ export function usePreloader() {
     _animDone.value = true
   }
 
-  // Called by the page when above-the-fold assets (poster + fonts) are ready.
+  // Called by the page when all above-the-fold assets have settled.
   // On returning visits ThePreloader calls complete() directly — this is a no-op.
   function signalAssetsReady(): void {
     _assetsDone.value = true
   }
 
+  // Reports how many of the total assets have loaded (0–1 ratio).
+  function updateProgress(loaded: number, total: number): void {
+    _progress.value = total > 0 ? loaded / total : 1
+  }
+
   return {
     isComplete:           readonly(_isComplete),
     canWipe:              readonly(_canWipe),
+    progress:             readonly(_progress),
     isFirstVisit,
     complete,
     signalAnimationReady,
     signalAssetsReady,
+    updateProgress,
   } as const
 }

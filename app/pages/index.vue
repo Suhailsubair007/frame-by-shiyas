@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { META }         from '@shared/constants/META'
+import { PHOTOGRAPHY }  from '@shared/constants/PHOTOGRAPHY'
+import { ABOUT }        from '@shared/constants/ABOUT'
 import { usePreloader } from '@/composables/usePreloader'
 
 definePageMeta({ layout: 'default' })
@@ -16,31 +18,42 @@ useSeoMeta({
   twitterCard:     'summary_large_image',
 })
 
-// Preload the poster so it's already in cache when the hero mounts.
+// Preload the hero poster so it's in cache before the hero mounts.
 useHead({
   link: [{ rel: 'preload', as: 'image', href: HERO_POSTER }],
 })
 
-// Signal the preloader as soon as above-the-fold assets are ready.
-// The wipe fires only after BOTH this signal AND the brand animation
-// minimum have completed — whichever is slower sets the pace.
-// A 5 s hard cap prevents the splash from hanging on very slow connections.
-const { signalAssetsReady } = usePreloader()
+const { signalAssetsReady, updateProgress } = usePreloader()
 
 onMounted(() => {
-  const ASSET_TIMEOUT_MS = 5_000
+  // All images that must be loaded before the splash dismisses.
+  // Hero poster (CDN) + every photography card + the about portrait.
+  const imageSrcs: readonly string[] = [
+    HERO_POSTER,
+    ...PHOTOGRAPHY.map(p => p.coverImage.src),
+    ABOUT.PORTRAIT.src,
+  ]
 
-  const posterReady = new Promise<void>((resolve) => {
-    const img = new Image()
-    img.onload  = () => resolve()
-    img.onerror = () => resolve()
-    img.src = HERO_POSTER
-  })
+  const total = imageSrcs.length
+  let loaded = 0
 
-  const timeout = new Promise<void>(resolve => setTimeout(resolve, ASSET_TIMEOUT_MS))
+  updateProgress(0, total)
+
+  const imagePromises = imageSrcs.map(
+    src => new Promise<void>((resolve) => {
+      const img = new Image()
+      img.onload  = () => { loaded++; updateProgress(loaded, total); resolve() }
+      img.onerror = () => { loaded++; updateProgress(loaded, total); resolve() }
+      img.src = src
+    }),
+  )
+
+  // 8 s hard cap — prevents the splash hanging on very slow connections.
+  // On timeout the wipe fires with whatever images have settled.
+  const timeout = new Promise<void>(resolve => setTimeout(resolve, 8_000))
 
   Promise.race([
-    Promise.all([posterReady, document.fonts.ready]),
+    Promise.all([...imagePromises, document.fonts.ready]),
     timeout,
   ])
     .then(() => signalAssetsReady())

@@ -4,12 +4,18 @@ import { usePreloader }     from '@/composables/usePreloader'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
 
-const { isFirstVisit, canWipe, signalAnimationReady, complete } = usePreloader()
+const { isFirstVisit, canWipe, progress, signalAnimationReady, complete } = usePreloader()
 const prefersReducedMotion = useReducedMotion()
 
 const overlayRef = ref<HTMLElement | null>(null)
 const brandRef   = ref<HTMLElement | null>(null)
-const lineRef    = ref<HTMLElement | null>(null)
+
+// CSS-driven progress bar — fills in real-time as images load.
+// origin-left is set via Tailwind; transform-origin must not be overridden.
+const lineStyle = computed(() => ({
+  transform:  `scaleX(${progress.value})`,
+  transition: 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+}))
 
 // Phase 2: cinematic wipe — fires as soon as canWipe becomes true.
 // Brand fades out while the overlay clips upward, revealing the hero.
@@ -18,7 +24,7 @@ function runWipe(): void {
     .to(brandRef.value, {
       opacity:  0,
       y:        -8,
-      duration: 0.3,
+      duration: ANIMATION.DURATION.FAST,
       ease:     ANIMATION.EASE.DEFAULT,
     })
     .to(overlayRef.value, {
@@ -35,25 +41,22 @@ onMounted(() => {
     return
   }
 
-  // Phase 1: Minimum brand moment (~1.35 s).
-  // Brand enters and holds — it stays visible until the wipe fires.
-  // signalAnimationReady() is the "animation floor" gate for the wipe.
+  // Phase 1: brand entrance (~0.95 s floor).
+  // The progress line tracks real asset loading via CSS — no GSAP needed for it.
+  // signalAnimationReady() is the animation-floor gate; wipe waits for both
+  // this AND signalAssetsReady() to fire.
   gsap.timeline({ onComplete: signalAnimationReady })
     .fromTo(brandRef.value,
       { opacity: 0, y: 12 },
       { opacity: 1, y: 0, duration: 0.7, ease: ANIMATION.EASE.EXPO_OUT },
       0.1,
     )
-    .fromTo(lineRef.value,
-      { scaleX: 0, transformOrigin: 'left center' },
-      { scaleX: 1, duration: 0.9, ease: 'power2.inOut' },
-      0.2,
-    )
     .to({}, { duration: 0.25 })
 
-  // Phase 2: wipe — starts the moment BOTH animation floor AND assets are ready.
-  // On fast connections assets may already be ready by the time Phase 1 ends.
-  // On slow connections the brand holds until assets arrive (max 5 s — enforced in index.vue).
+  // Phase 2: wipe — starts the moment BOTH the animation floor AND all
+  // assets have settled. On fast connections assets may arrive before
+  // the brand animation ends; on slow connections the brand holds
+  // (hard cap enforced in index.vue).
   const stop = watch(canWipe, (ready) => {
     if (!ready) return
     stop()
@@ -82,11 +85,11 @@ onMounted(() => {
       </span>
     </div>
 
-    <!-- Thin filling line -->
+    <!-- Progress bar — driven by real image load progress, not a fake timer -->
     <div class="mt-8 h-px w-40 overflow-hidden bg-border">
       <div
-        ref="lineRef"
-        class="h-full w-full origin-left scale-x-0 bg-text-muted"
+        class="h-full w-full origin-left bg-text-muted"
+        :style="lineStyle"
       />
     </div>
   </div>
