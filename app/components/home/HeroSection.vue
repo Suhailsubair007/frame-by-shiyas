@@ -43,7 +43,6 @@ onMounted(() => {
     }
 
     gsap.set([sel('name'), sel('meta'), sel('scroll')], { opacity: 0 })
-    gsap.set(sel('rule'), { scaleX: 0, transformOrigin: 'left center' })
     gsap.set('.vf-corner', { opacity: 0 })
 
     const title = titleRef.value
@@ -86,7 +85,6 @@ watch(() => isComplete.value, (done) => {
 function animateIn(): void {
   if (prefersReducedMotion.value) {
     gsap.set([sel('name'), sel('meta'), sel('scroll')], { opacity: 1 })
-    gsap.set(sel('rule'), { scaleX: 1 })
     gsap.set('.vf-corner', { opacity: 1 })
     gsap.set(split?.words ?? [], { y: 0 })
     startScrollLoop()
@@ -118,11 +116,6 @@ function animateIn(): void {
       duration: ANIMATION.DURATION.DEFAULT,
       ease:     'none',
     }, 1.0)
-    .to(sel('rule'), {
-      scaleX:   1,
-      duration: ANIMATION.DURATION.SLOW,
-      ease:     ANIMATION.EASE.EXPO_OUT,
-    }, 1.1)
     .to(sel('scroll'), {
       opacity:  1,
       duration: ANIMATION.DURATION.DEFAULT,
@@ -263,17 +256,10 @@ onUnmounted(() => {
         </span>
       </div>
 
-      <!-- Rule — animates scaleX from left -->
-      <div
-        data-hero="rule"
-        class="my-4 h-px origin-left bg-border-strong md:my-5"
-        aria-hidden="true"
-      />
-
       <!-- Headline -->
       <h1
         ref="titleRef"
-        class="font-display font-normal italic leading-[0.87] text-text"
+        class="mt-4 font-display font-normal italic leading-[0.87] text-text md:mt-5"
         style="font-size: clamp(46px, 6.5vw, 112px);"
       >
         Craft the<br />Unrepeatable.
