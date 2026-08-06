@@ -18,10 +18,13 @@ let autoTimer:    ReturnType<typeof setInterval> | null = null
 let isPaused      = false
 
 // ── Card slot configs (offsets relative to activeIndex) ──────────────────────
+// xMult is multiplied by cardWidth and added to containerMid (= -cardWidth/2).
+// At xMult 0.92 the adjacent card's visual left edge clears the center card's
+// right edge by ~3% of cardWidth — eliminating overlap while keeping depth.
 const SLOT: Record<number, { xMult: number; scale: number; opacity: number; zIndex: number }> = {
   0: { xMult: 0,    scale: 1.00, opacity: 1.00, zIndex: 4 },
-  1: { xMult: 0.78, scale: 0.78, opacity: 0.55, zIndex: 3 },
-  2: { xMult: 1.38, scale: 0.60, opacity: 0.25, zIndex: 2 },
+  1: { xMult: 0.92, scale: 0.78, opacity: 0.65, zIndex: 3 },
+  2: { xMult: 1.58, scale: 0.60, opacity: 0.30, zIndex: 2 },
 }
 
 function getSlot(cardIdx: number): number {
