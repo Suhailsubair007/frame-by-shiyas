@@ -42,7 +42,8 @@ onMounted(() => {
       return
     }
 
-    gsap.set([sel('name'), sel('roles'), sel('scroll')], { opacity: 0 })
+    gsap.set([sel('name'), sel('meta'), sel('scroll')], { opacity: 0 })
+    gsap.set(sel('rule'), { scaleX: 0, transformOrigin: 'left center' })
     gsap.set('.vf-corner', { opacity: 0 })
 
     const title = titleRef.value
@@ -84,7 +85,8 @@ watch(() => isComplete.value, (done) => {
 
 function animateIn(): void {
   if (prefersReducedMotion.value) {
-    gsap.set([sel('name'), sel('roles'), sel('scroll')], { opacity: 1 })
+    gsap.set([sel('name'), sel('meta'), sel('scroll')], { opacity: 1 })
+    gsap.set(sel('rule'), { scaleX: 1 })
     gsap.set('.vf-corner', { opacity: 1 })
     gsap.set(split?.words ?? [], { y: 0 })
     startScrollLoop()
@@ -111,16 +113,21 @@ function animateIn(): void {
       stagger:  0.09,
       ease:     ANIMATION.EASE.EXPO_OUT,
     }, 0.52)
-    .to(sel('roles'), {
+    .to(sel('meta'), {
       opacity:  1,
       duration: ANIMATION.DURATION.DEFAULT,
       ease:     'none',
-    }, 1.05)
+    }, 1.0)
+    .to(sel('rule'), {
+      scaleX:   1,
+      duration: ANIMATION.DURATION.SLOW,
+      ease:     ANIMATION.EASE.EXPO_OUT,
+    }, 1.1)
     .to(sel('scroll'), {
       opacity:  1,
       duration: ANIMATION.DURATION.DEFAULT,
       ease:     'none',
-    }, 1.2)
+    }, 1.3)
 }
 
 function startScrollLoop(): void {
@@ -242,25 +249,35 @@ onUnmounted(() => {
 
     <!-- ── Bottom content ─────────────────────────────────────── -->
     <div class="absolute inset-x-6 bottom-20 md:inset-x-10 md:bottom-28">
-      <div class="flex items-end justify-between">
-        <h1
-          ref="titleRef"
-          class="font-display font-normal italic leading-[0.87] text-text"
-          style="font-size: clamp(46px, 6.5vw, 112px);"
-        >
-          Moments <span class="font-sans font-light italic">&amp;</span><br />Motion.
-        </h1>
-
-        <div
-          data-hero="roles"
-          class="hidden flex-col items-end gap-1.5 pb-0.5 md:flex"
-          aria-hidden="true"
-        >
-          <span class="font-mono text-[9px] uppercase tracking-[0.28em] text-text-faint">Videographer</span>
-          <span class="font-mono text-[9px] uppercase tracking-[0.28em] text-text-faint">&amp; Photographer</span>
-          <span class="mt-2.5 font-mono text-[8px] uppercase tracking-[0.28em] text-text-faint opacity-50">Kerala, India</span>
-        </div>
+      <!-- Metadata strip -->
+      <div
+        data-hero="meta"
+        class="flex items-center justify-between"
+        aria-hidden="true"
+      >
+        <span class="font-mono text-[8px] uppercase tracking-[0.28em] text-text-faint">
+          Cinematographer &amp; Photographer
+        </span>
+        <span class="hidden font-mono text-[8px] uppercase tracking-[0.28em] text-text-faint opacity-50 md:block">
+          Kerala, India
+        </span>
       </div>
+
+      <!-- Rule — animates scaleX from left -->
+      <div
+        data-hero="rule"
+        class="my-4 h-px origin-left bg-border-strong md:my-5"
+        aria-hidden="true"
+      />
+
+      <!-- Headline -->
+      <h1
+        ref="titleRef"
+        class="font-display font-normal italic leading-[0.87] text-text"
+        style="font-size: clamp(46px, 6.5vw, 112px);"
+      >
+        Craft the<br />Unrepeatable.
+      </h1>
     </div>
 
     <!-- ── Scroll indicator ───────────────────────────────────── -->
