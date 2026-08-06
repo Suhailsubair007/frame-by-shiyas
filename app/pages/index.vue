@@ -20,7 +20,10 @@ useSeoMeta({
 
 // Preload the hero poster so it's in cache before the hero mounts.
 useHead({
-  link: [{ rel: 'preload', as: 'image', href: HERO_POSTER }],
+  link: [
+    { rel: 'preload', as: 'image', href: HERO_POSTER },
+    { rel: 'preload', as: 'video', href: HERO_VIDEO, type: 'video/mp4' },
+  ],
 })
 
 const { signalAssetsReady, updateProgress } = usePreloader()
