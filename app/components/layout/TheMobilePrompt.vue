@@ -19,6 +19,15 @@ onMounted(() => {
   show()
 })
 
+// ── Scroll lock — prevent body scroll while prompt is visible ────────────────
+watch(isVisible, (val) => {
+  document.body.style.overflow = val ? 'hidden' : ''
+})
+
+onUnmounted(() => {
+  document.body.style.overflow = ''
+})
+
 // ── Keyboard: Escape dismisses ───────────────────────────────────────────────
 function onKeydown(e: KeyboardEvent): void {
   if (e.key === 'Escape' && isVisible.value) handleDismiss()
