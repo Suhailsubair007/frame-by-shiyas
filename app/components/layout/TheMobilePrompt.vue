@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { gsap }             from 'gsap'
-import { usePreloader }     from '@/composables/usePreloader'
 import { useMobilePrompt }  from '@/composables/useMobilePrompt'
 import { useMediaQuery }    from '@/composables/useMediaQuery'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
 
-const { isComplete }                            = usePreloader()
 const { isVisible, show, dismiss, isDismissed } = useMobilePrompt()
 const { isMobile }                              = useMediaQuery()
 const prefersReducedMotion                      = useReducedMotion()
@@ -15,16 +13,10 @@ const promptRef     = ref<HTMLElement | null>(null)
 const cardRef       = ref<HTMLElement | null>(null)
 const primaryBtnRef = ref<HTMLButtonElement | null>(null)
 
-// ── Timing: show 400 ms after preloader wipes away, mobile only ──────────────
+// ── Timing: show immediately on first visit, mobile only ─────────────────────
 onMounted(() => {
-  if (isDismissed()) return
-
-  const stop = watch(isComplete, (done) => {
-    if (!done) return
-    stop()
-    if (!isMobile.value) return
-    setTimeout(() => show(), 400)
-  }, { immediate: true })
+  if (isDismissed() || !isMobile.value) return
+  show()
 })
 
 // ── Keyboard: Escape dismisses ───────────────────────────────────────────────
@@ -86,7 +78,7 @@ function handleDismiss(): void {
     v-if="isVisible"
     ref="promptRef"
     class="fixed inset-0 opacity-0"
-    style="z-index: var(--z-modal);"
+    style="z-index: var(--z-prompt);"
     role="dialog"
     aria-modal="true"
     aria-labelledby="mobile-prompt-heading"
