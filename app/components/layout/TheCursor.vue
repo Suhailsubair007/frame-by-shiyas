@@ -31,8 +31,11 @@ function initFollow(): boolean {
   const dot  = dotRef.value
   if (!ring || !dot) return false
 
-  // Position off-screen initially so there's no flash at (0,0)
+  // Position off-screen initially so there's no flash at (0,0).
+  // Start ring at DEFAULT scale (0.3) so it's rasterised at its full 120 px
+  // natural size from the first frame — all state transitions only scale down.
   gsap.set([ring, dot], { x: -200, y: -200 })
+  gsap.set(ring, { scale: 0.3 })
 
   xTo = gsap.quickTo(ring, 'x', { duration: 0.55, ease: 'power3' })
   yTo = gsap.quickTo(ring, 'y', { duration: 0.55, ease: 'power3' })
@@ -87,13 +90,21 @@ watch(state, (next) => {
   const ring = ringRef.value
   if (!ring) return
 
+  // Ring natural size is 120 px. All scale values are relative to that.
+  // Visual size = 120 × scale. We never exceed scale 1 so the GPU only
+  // downscales the compositor layer — keeping every state crisp.
+  //   DEFAULT → 120 × 0.30 = 36 px  (same visual as before)
+  //   HOVER   → 120 × 0.48 = 58 px
+  //   VIEW    → 120 × 0.96 = 115 px
+  //   DRAG    → 120 × 0.36 = 43 px tall, 120 × 0.60 = 72 px wide
+  //   PLAY    → 120 × 0.84 = 101 px
   const config: Record<CURSOR_STATE, gsap.TweenVars> = {
-    [CURSOR_STATE.DEFAULT]: { scale: 1,   scaleX: 1, opacity: 1,   duration: 0.45, ease: 'power2.out' },
-    [CURSOR_STATE.HOVER]:   { scale: 1.6, scaleX: 1, opacity: 0.7, duration: 0.35, ease: 'power2.out' },
-    [CURSOR_STATE.VIEW]:    { scale: 3.2, scaleX: 1, opacity: 0.9, duration: 0.5,  ease: 'expo.out' },
-    [CURSOR_STATE.DRAG]:    { scale: 1.2, scaleX: 2, opacity: 0.8, duration: 0.4,  ease: 'power2.out' },
-    [CURSOR_STATE.PLAY]:    { scale: 2.8, scaleX: 1, opacity: 0.9, duration: 0.5,  ease: 'expo.out' },
-    [CURSOR_STATE.HIDDEN]:  { scale: 0,   scaleX: 1, opacity: 0,   duration: 0.3,  ease: 'power2.in' },
+    [CURSOR_STATE.DEFAULT]: { scale: 0.3,  scaleX: 0.3,  opacity: 1,   duration: 0.45, ease: 'power2.out' },
+    [CURSOR_STATE.HOVER]:   { scale: 0.48, scaleX: 0.48, opacity: 0.7, duration: 0.35, ease: 'power2.out' },
+    [CURSOR_STATE.VIEW]:    { scale: 0.96, scaleX: 0.96, opacity: 0.9, duration: 0.5,  ease: 'expo.out'   },
+    [CURSOR_STATE.DRAG]:    { scale: 0.36, scaleX: 0.6,  opacity: 0.8, duration: 0.4,  ease: 'power2.out' },
+    [CURSOR_STATE.PLAY]:    { scale: 0.84, scaleX: 0.84, opacity: 0.9, duration: 0.5,  ease: 'expo.out'   },
+    [CURSOR_STATE.HIDDEN]:  { scale: 0,    scaleX: 0,    opacity: 0,   duration: 0.3,  ease: 'power2.in'  },
   }
 
   gsap.to(ring, config[next])
@@ -128,16 +139,18 @@ const labelText = computed(() => {
         style="transform-origin: center; will-change: transform;"
       />
 
-      <!-- Ring — lagged follow, morphs with state -->
+      <!-- Ring — lagged follow, morphs with state.
+           Natural size 120 px so GPU always downscales the compositor layer,
+           keeping the border and label crisp at every state. -->
       <div
         ref="ringRef"
-        class="absolute left-0 top-0 flex h-9 w-9 items-center justify-center rounded-full border border-text opacity-0"
-        style="transform-origin: center; will-change: transform; margin: -18px 0 0 -18px;"
+        class="absolute left-0 top-0 flex h-[120px] w-[120px] items-center justify-center rounded-full border-2 border-text opacity-0"
+        style="transform-origin: center; will-change: transform; margin: -60px 0 0 -60px;"
       >
         <Transition name="cursor-label">
           <span
             v-if="showLabel"
-            class="select-none font-mono text-[8px] uppercase tracking-widest text-text"
+            class="select-none font-mono text-[27px] uppercase tracking-widest text-text"
           >
             {{ labelText }}
           </span>
