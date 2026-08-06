@@ -206,4 +206,10 @@
     white-space: nowrap;
     border: 0;
   }
+
+  /* Safe-area bottom padding — floors at 2.5 rem (40 px) on devices without
+     a home indicator; uses the env inset on notched iPhones (≈34 px + flooring). */
+  .pb-safe {
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px));
+  }
 }
