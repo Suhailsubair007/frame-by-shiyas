@@ -6,8 +6,8 @@ import { usePreloader } from '@/composables/usePreloader'
 
 definePageMeta({ layout: 'default' })
 
-const HERO_VIDEO  = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/Timeline%201website%201.mp4'
-const HERO_POSTER = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas/AJ709696.jpg'
+const HERO_VIDEO  = 'https://cdn.muhmdshiyas.com/shiyas/Timeline%201website%201.mp4'
+const HERO_POSTER = 'https://cdn.muhmdshiyas.com/shiyas/2.jpg'
 
 useSeoMeta({
   title:           META.DEFAULT_TITLE,
@@ -48,9 +48,8 @@ onMounted(() => {
     }),
   )
 
-  // 8 s hard cap — prevents the splash hanging on very slow connections.
-  // On timeout the wipe fires with whatever images have settled.
-  const timeout = new Promise<void>(resolve => setTimeout(resolve, 8_000))
+  // 4 s hard cap — prevents the splash hanging on slow or distant connections.
+  const timeout = new Promise<void>(resolve => setTimeout(resolve, 4_000))
 
   Promise.race([
     Promise.all([...imagePromises, document.fonts.ready]),

@@ -58,6 +58,7 @@ const emit = defineEmits<{
 
 const videoRef      = ref<HTMLVideoElement | null>(null)
 const isReady       = ref(props.eager)
+const isError       = ref(false)
 const isPlaying     = ref(false)
 let   fallbackTimer = 0
 const { setState, reset } = useCursorState()
@@ -112,6 +113,11 @@ function markReady(): void {
   emit('ready')
 }
 
+function markError(): void {
+  isError.value = true
+  window.clearTimeout(fallbackTimer)
+}
+
 onUnmounted(() => {
   stop()
   window.clearTimeout(fallbackTimer)
@@ -125,9 +131,9 @@ onUnmounted(() => {
     @mouseenter="cursorPlay ? setState(CURSOR_STATE.PLAY) : undefined"
     @mouseleave="cursorPlay ? reset() : undefined"
   >
-    <!-- Poster shown until video is ready -->
+    <!-- Poster shown until video is ready, or permanently on error -->
     <img
-      v-if="poster && !isReady"
+      v-if="poster && (!isReady || isError)"
       :src="poster"
       alt=""
       aria-hidden="true"
@@ -135,6 +141,7 @@ onUnmounted(() => {
     />
 
     <video
+      v-if="!isError"
       ref="videoRef"
       :loop="loop"
       :muted="muted"
@@ -150,6 +157,7 @@ onUnmounted(() => {
       @loadeddata="markReady"
       @canplaythrough="markReady"
       @playing="markReady"
+      @error="markError"
     >
       <source
         v-for="s in sources"
