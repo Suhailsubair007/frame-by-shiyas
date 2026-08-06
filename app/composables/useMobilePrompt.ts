@@ -1,6 +1,5 @@
 import { STORAGE_KEYS } from '@shared/constants/STORAGE_KEYS'
 
-// Module-level singleton — persists for the lifetime of the page session.
 const _isVisible = ref(false)
 
 export function useMobilePrompt() {
