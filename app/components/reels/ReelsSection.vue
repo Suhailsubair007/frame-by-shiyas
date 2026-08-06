@@ -16,6 +16,8 @@ let cardWidth     = 0
 let containerMid  = 0   // = -(cardWidth / 2) — offset to center a card from left:50%
 let autoTimer:    ReturnType<typeof setInterval> | null = null
 let isPaused      = false
+let touchStartX   = 0
+let touchStartY   = 0
 
 // ── Card slot configs (offsets relative to activeIndex) ──────────────────────
 // xMult is multiplied by cardWidth and added to containerMid (= -cardWidth/2).
@@ -83,6 +85,34 @@ function goTo(index: number): void {
   activeIndex.value = index
 }
 
+// ── Touch swipe — mobile only (touch events never fire on desktop) ────────────
+// Records the start position; onTouchEnd decides direction once the finger lifts.
+// Horizontal-dominant swipes (|ΔX| ≥ |ΔY|, |ΔX| ≥ threshold) advance/retreat.
+const SWIPE_THRESHOLD = 50
+
+function onTouchStart(e: TouchEvent): void {
+  touchStartX = e.touches[0].clientX
+  touchStartY = e.touches[0].clientY
+  isPaused    = true
+}
+
+function onTouchEnd(e: TouchEvent): void {
+  const deltaX = e.changedTouches[0].clientX - touchStartX
+  const deltaY = e.changedTouches[0].clientY - touchStartY
+
+  if (Math.abs(deltaX) >= SWIPE_THRESHOLD && Math.abs(deltaX) >= Math.abs(deltaY)) {
+    if (deltaX < 0) {
+      // Swipe left → next reel
+      activeIndex.value = (activeIndex.value + 1) % REELS.length
+    } else {
+      // Swipe right → previous reel
+      activeIndex.value = (activeIndex.value - 1 + REELS.length) % REELS.length
+    }
+  }
+
+  isPaused = false
+}
+
 watch(activeIndex, () => placeCards(true))
 
 onMounted(() => {
@@ -114,6 +144,8 @@ onUnmounted(() => {
     class="overflow-hidden bg-void py-16 md:py-32"
     @mouseenter="isPaused = true"
     @mouseleave="isPaused = false"
+    @touchstart.passive="onTouchStart"
+    @touchend.passive="onTouchEnd"
   >
     <!-- Section header -->
     <div class="mb-12 px-6 md:mb-16 md:px-10">
