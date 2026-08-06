@@ -102,11 +102,11 @@ function handleDismiss(): void {
     <!-- Card -->
     <div
       ref="cardRef"
-      class="absolute inset-x-0 bottom-0 rounded-t-2xl bg-void px-6 pb-10 pt-8"
+      class="absolute inset-x-0 bottom-0 rounded-t-2xl bg-void px-6 pb-safe pt-8"
     >
       <!-- Handle bar -->
       <div
-        class="mx-auto mb-6 h-px w-10 bg-border"
+        class="mx-auto mb-6 h-1 w-10 rounded-full bg-border"
         aria-hidden="true"
       />
 

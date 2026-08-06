@@ -73,7 +73,7 @@ onMounted(() => {
       </div>
 
       <!-- ── Right: Content ──────────────────────────────────────────── -->
-      <div class="flex flex-col justify-center px-8 py-12 md:px-12 md:py-14 lg:px-16">
+      <div class="flex flex-col justify-center px-6 py-12 md:px-12 md:py-14 lg:px-16">
 
         <!-- Eyebrow -->
         <p

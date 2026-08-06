@@ -32,7 +32,7 @@ const filters: Array<{ label: string; value: GALLERY_CATEGORY | null }> = [
       <li v-for="f in filters" :key="f.label">
         <button
           type="button"
-          class="rounded-full border px-4 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] transition-colors duration-300"
+          class="rounded-full border px-4 py-2.5 md:py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] transition-colors duration-300"
           :class="active === f.value
             ? 'border-text bg-text text-void'
             : 'border-text/20 text-text-muted hover:border-text/50 hover:text-text'"

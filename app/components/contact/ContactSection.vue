@@ -66,7 +66,7 @@ onMounted(() => {
         <!-- Tagline -->
         <p
           ref="taglineRef"
-          class="mb-14 max-w-[52ch] font-sans text-base font-light leading-relaxed text-text-muted opacity-0"
+          class="mb-10 md:mb-14 max-w-[52ch] font-sans text-base font-light leading-relaxed text-text-muted opacity-0"
         >
           {{ CONTACT.TAGLINE }}
         </p>
@@ -76,7 +76,7 @@ onMounted(() => {
           ref="emailRef"
           :href="`mailto:${CONTACT.EMAIL}`"
           class="group relative mb-16 inline-block w-fit font-display font-normal italic leading-[1.2] text-text opacity-0"
-          style="font-size: clamp(22px, 3.5vw, 52px);"
+          style="font-size: clamp(26px, 3.5vw, 52px);"
           :aria-label="`Email ${CONTACT.EMAIL}`"
         >
           {{ CONTACT.EMAIL }}
@@ -134,7 +134,7 @@ onMounted(() => {
     </div>
 
     <!-- Bottom bar — site nav + copyright -->
-    <footer class="flex items-center justify-between border-t border-border px-6 py-6 md:px-10">
+    <footer class="flex flex-col gap-4 border-t border-border px-6 py-6 md:flex-row md:items-center md:justify-between md:px-10">
       <p class="font-mono text-[9px] text-text-faint">
         © {{ new Date().getFullYear() }} {{ META.SITE_NAME }}. All rights reserved.
       </p>

@@ -148,7 +148,7 @@ function onNavClick(hash: string): void {
     <!-- ── Footer row ── -->
     <div
       ref="footerRef"
-      class="flex items-end justify-between px-6 pb-8 opacity-0 md:px-10"
+      class="flex items-end justify-between px-6 pb-safe opacity-0 md:px-10"
     >
       <div class="flex gap-5">
         <a

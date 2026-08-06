@@ -111,7 +111,7 @@ onUnmounted(() => {
 
 <template>
   <section
-    class="overflow-hidden bg-void py-24 md:py-32"
+    class="overflow-hidden bg-void py-16 md:py-32"
     @mouseenter="isPaused = true"
     @mouseleave="isPaused = false"
   >
