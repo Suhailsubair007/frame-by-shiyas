@@ -4,7 +4,7 @@ export const ABOUT = {
 
   BIO: [
     'A decade on both sides of the lens. Photojournalism across India. High-stakes advertising across the Gulf. Weddings, events, and corporate productions where every frame had to be right the first time.',
-    'Based in Sharjah, Muhammed Shiyas commands the full creative pipeline — camera and drone through colour grade and final cut — delivering visual work built to endure.',
+    'Based in Sharjah, Muhammed Shiyas commands the full creative pipeline from camera and drone through colour grade and final cut, delivering visual work built to endure.',
   ],
 
   STATS: [
