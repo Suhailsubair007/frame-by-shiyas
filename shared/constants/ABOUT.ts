@@ -3,7 +3,8 @@ export const ABOUT = {
   HEADING_FOOT: 'Behind the Frame.',
 
   BIO: [
-    'Muhammed Shiyas is a Sharjah-based videographer, photographer, and editor with over a decade of experience spanning photojournalism across India, high-profile advertising campaigns in the Gulf, and weddings, events, and corporate productions — commanding the full creative pipeline from camera and drone to colour grading and final cut.',
+    'A decade on both sides of the lens. Photojournalism across India. High-stakes advertising across the Gulf. Weddings, events, and corporate productions where every frame had to be right the first time.',
+    'Based in Sharjah, Muhammed Shiyas commands the full creative pipeline — camera and drone through colour grade and final cut — delivering visual work built to endure.',
   ],
 
   STATS: [
