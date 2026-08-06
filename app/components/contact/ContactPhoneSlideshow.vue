@@ -47,14 +47,34 @@ const photoSlide = computed<SLIDE_PHOTO | null>(() => {
   return s.type === 'photo' ? s : null
 })
 
-let timer: ReturnType<typeof setInterval> | null = null
+let timer:    ReturnType<typeof setInterval> | null = null
+let observer: IntersectionObserver | null           = null
+
+const rootRef = ref<HTMLElement | null>(null)
 
 function advance(): void {
   currentIndex.value = (currentIndex.value + 1) % SLIDES.length
 }
 
-onMounted(() => { timer = setInterval(advance, SLIDE_DURATION) })
-onUnmounted(() => { if (timer) clearInterval(timer) })
+onMounted(() => {
+  // Start the slideshow only once, when the phone enters the viewport.
+  // Disconnecting after the first intersection ensures it never re-triggers.
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting) return
+      timer = setInterval(advance, SLIDE_DURATION)
+      observer?.disconnect()
+      observer = null
+    },
+    { threshold: 0.1 },
+  )
+  if (rootRef.value) observer.observe(rootRef.value)
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+  if (timer) clearInterval(timer)
+})
 </script>
 
 <template>
@@ -62,7 +82,7 @@ onUnmounted(() => { if (timer) clearInterval(timer) })
     Root div is overflow-hidden so the off-screen entering/leaving slides are
     clipped at the screen boundary during the CSS translateX transition.
   -->
-  <div class="relative h-full w-full overflow-hidden">
+  <div ref="rootRef" class="relative h-full w-full overflow-hidden">
     <Transition name="phone-slide">
       <div :key="currentIndex" class="absolute inset-0">
 
