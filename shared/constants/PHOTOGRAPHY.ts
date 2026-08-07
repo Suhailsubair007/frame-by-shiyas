@@ -1,126 +1,28 @@
-import type { PROJECT_LIST_ITEM } from '@shared/types/Project'
-import type { GALLERY_IMAGE }    from '@shared/types/Project'
-import { GALLERY_CATEGORY }      from '@shared/enums/GalleryCategory'
+import type { PROJECT_LIST_ITEM, GALLERY_IMAGE } from '@shared/types/Project'
+import type { MEDIA_IMAGE }                       from '@shared/types/Media'
+import { ALL_IMAGES }                             from '@shared/constants/MEDIA'
 
-function photo(file: string, alt: string): GALLERY_IMAGE {
-  return { id: file, src: `/images/${file}`, alt, width: 1280, height: 1600 }
+// The photography grid is a projection of the centralised image galleries — no
+// URLs are hardcoded here. Each media item maps to a gallery card 1:1, and the
+// item's id (e.g. `food-1`) doubles as its route slug.
+function toProject(image: MEDIA_IMAGE): PROJECT_LIST_ITEM {
+  const coverImage: GALLERY_IMAGE = {
+    id:     image.id,
+    src:    image.url,
+    alt:    image.alt,
+    width:  image.width,
+    height: image.height,
+  }
+
+  return {
+    id:          image.id,
+    title:       image.title,
+    slug:        image.id,
+    category:    image.category,
+    coverImage,
+    isFeatured:  false,
+    isLandscape: false,
+  }
 }
 
-export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = [
-  {
-    id:          'ph8',
-    title:       'Form',
-    slug:        'form',
-    category:    GALLERY_CATEGORY.COMMERCIAL,
-    coverImage:  photo('P8.jpg', 'Form — Commercial'),
-    isFeatured:  true,
-    isLandscape: false,
-    tagline:     'Design stripped to its essence.',
-  },
-  {
-    id:          'ph3',
-    title:       'Concrete',
-    slug:        'concrete',
-    category:    GALLERY_CATEGORY.STREET,
-    coverImage:  photo('P3.jpg', 'Concrete — Street'),
-    isFeatured:  false,
-    isLandscape: false,
-  },
-  {
-    id:          'ph10',
-    title:       'Presence',
-    slug:        'presence',
-    category:    GALLERY_CATEGORY.PORTRAIT,
-    coverImage:  photo('P10.jpg', 'Presence — Portrait'),
-    isFeatured:  false,
-    isLandscape: false,
-    tagline:     'To be seen is to exist.',
-  },
-  {
-    id:          'ph5',
-    title:       'Dusk',
-    slug:        'dusk',
-    category:    GALLERY_CATEGORY.TRAVEL,
-    coverImage:  photo('P5.jpg', 'Dusk — Travel'),
-    isFeatured:  false,
-    isLandscape: false,
-    tagline:     'The hour that belongs to no one.',
-  },
-  {
-    id:          'ph1',
-    title:       'Golden Hour',
-    slug:        'golden-hour',
-    category:    GALLERY_CATEGORY.WEDDING,
-    coverImage:  photo('P1.jpg', 'Golden Hour — Wedding'),
-    isFeatured:  true,
-    isLandscape: false,
-    tagline:     'Light as witness.',
-  },
-  {
-    id:          'ph12',
-    title:       'Drift',
-    slug:        'drift',
-    category:    GALLERY_CATEGORY.STREET,
-    coverImage:  photo('P12.jpg', 'Drift — Street'),
-    isFeatured:  false,
-    isLandscape: false,
-    tagline:     'The city never sleeps, only shifts.',
-  },
-  {
-    id:          'ph2',
-    title:       'Reverie',
-    slug:        'reverie',
-    category:    GALLERY_CATEGORY.PORTRAIT,
-    coverImage:  photo('P2.jpg', 'Reverie — Portrait'),
-    isFeatured:  true,
-    isLandscape: false,
-    tagline:     'Between waking and dreaming.',
-  },
-  {
-    id:          'ph9',
-    title:       'Horizon',
-    slug:        'horizon',
-    category:    GALLERY_CATEGORY.TRAVEL,
-    coverImage:  photo('P9.jpg', 'Horizon — Travel'),
-    isFeatured:  false,
-    isLandscape: false,
-  },
-  {
-    id:          'ph6',
-    title:       'Bloom',
-    slug:        'bloom-portrait',
-    category:    GALLERY_CATEGORY.LIFESTYLE,
-    coverImage:  photo('P6.jpg', 'Bloom — Lifestyle'),
-    isFeatured:  false,
-    isLandscape: false,
-  },
-  {
-    id:          'ph7',
-    title:       'Veil',
-    slug:        'veil',
-    category:    GALLERY_CATEGORY.WEDDING,
-    coverImage:  photo('P7.jpg', 'Veil — Wedding'),
-    isFeatured:  false,
-    isLandscape: false,
-    tagline:     'What the veil keeps sacred.',
-  },
-  {
-    id:          'ph4',
-    title:       'Fragments',
-    slug:        'fragments',
-    category:    GALLERY_CATEGORY.EDITORIAL,
-    coverImage:  photo('P4.jpg', 'Fragments — Editorial'),
-    isFeatured:  false,
-    isLandscape: false,
-    tagline:     'A frame within a frame.',
-  },
-  {
-    id:          'ph11',
-    title:       'Still',
-    slug:        'still',
-    category:    GALLERY_CATEGORY.EDITORIAL,
-    coverImage:  photo('P11.jpg', 'Still — Editorial'),
-    isFeatured:  false,
-    isLandscape: false,
-  },
-]
+export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = ALL_IMAGES.map(toProject)

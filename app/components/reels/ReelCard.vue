@@ -2,10 +2,12 @@
 import type { REEL } from '@shared/types/Reel'
 
 const props = withDefaults(defineProps<{
-  reel:     REEL
-  isActive: boolean
+  reel:        REEL
+  isActive?:   boolean
+  shouldLoad?: boolean
 }>(), {
-  isActive: false,
+  isActive:    false,
+  shouldLoad:  false,
 })
 
 const videoRef = ref<HTMLVideoElement | null>(null)
@@ -28,15 +30,20 @@ function onLoadedMetadata(): void {
   const v = videoRef.value
   if (!v) return
   v.currentTime = START_OFFSET
+  // The active card may finish loading after it is already active — e.g. once the
+  // section scrolls near the viewport and its src binds — so start playback here too.
+  if (props.isActive) v.play().catch(() => {})
 }
 </script>
 
 <template>
   <div class="relative h-full w-full overflow-hidden rounded-2xl">
-    <!-- Video — preload metadata so the first frame is visible on inactive cards -->
+    <!-- Video — src binds only once the section nears the viewport (shouldLoad), so the
+         seven reel videos are not all fetched on initial page load. Inactive cards keep
+         preload="metadata" to show their first frame; the active card plays. -->
     <video
       ref="videoRef"
-      :src="reel.videoUrl"
+      :src="shouldLoad ? reel.videoUrl : undefined"
       class="h-full w-full object-cover transition-transform duration-700"
       :class="isActive ? 'scale-100' : 'scale-105'"
       muted

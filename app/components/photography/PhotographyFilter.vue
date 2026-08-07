@@ -11,13 +11,9 @@ const emit = defineEmits<{
 
 // Display labels map — avoids repeating .replace(/_/g, ' ') in template
 const CATEGORY_LABELS: Readonly<Record<GALLERY_CATEGORY, string>> = {
-  [GALLERY_CATEGORY.WEDDING]:    'Wedding',
-  [GALLERY_CATEGORY.PORTRAIT]:   'Portrait',
-  [GALLERY_CATEGORY.COMMERCIAL]: 'Commercial',
-  [GALLERY_CATEGORY.EDITORIAL]:  'Editorial',
-  [GALLERY_CATEGORY.TRAVEL]:     'Travel',
-  [GALLERY_CATEGORY.STREET]:     'Street',
-  [GALLERY_CATEGORY.LIFESTYLE]:  'Lifestyle',
+  [GALLERY_CATEGORY.FOOD]:    'Food',
+  [GALLERY_CATEGORY.OUTDOOR]: 'Outdoor',
+  [GALLERY_CATEGORY.PRODUCT]: 'Product',
 }
 
 const filters: Array<{ label: string; value: GALLERY_CATEGORY | null }> = [

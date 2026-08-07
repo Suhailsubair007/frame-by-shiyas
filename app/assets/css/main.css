@@ -181,19 +181,6 @@
     clip-path: inset(0 0 0% 0);
   }
 
-  /* Grain overlay — subtle noise texture for depth */
-  .grain::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url('/textures/grain.png');
-    background-size: 180px 180px;
-    opacity: 0.035;
-    pointer-events: none;
-    z-index: var(--z-raised);
-    mix-blend-mode: overlay;
-  }
-
   /* Visually hidden — accessible but not visible */
   .sr-only {
     position: absolute;
