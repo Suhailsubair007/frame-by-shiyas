@@ -1,82 +1,48 @@
 <script setup lang="ts">
-import { CURSOR_STATE } from '@shared/enums/CursorState'
-import { useCursorState } from '@/composables/useCursorState'
+// Renders a <picture> that serves a pre-baked AVIF (≈75% smaller) to supporting
+// browsers and the original JPEG as a universal fallback. No build-time image
+// service is required — the AVIF sibling is a committed static asset, so this works
+// identically on static (`nuxt generate`) and SSR deployments.
+//
+// inheritAttrs is disabled so caller-supplied class / listeners land on the <img>
+// (the visually rendered element) rather than the wrapping <picture>.
+defineOptions({ inheritAttrs: false })
 
-type IMAGE_FIT = 'cover' | 'contain' | 'fill'
+const props = withDefaults(
+  defineProps<{
+    src:      string
+    alt:      string
+    width?:   number
+    height?:  number
+    sizes?:   string
+    eager?:   boolean
+  }>(),
+  {
+    width:  undefined,
+    height: undefined,
+    sizes:  undefined,
+    eager:  false,
+  },
+)
 
-const props = withDefaults(defineProps<{
-  src:        string
-  alt:        string
-  width?:     number
-  height?:    number
-  sizes?:     string
-  fit?:       IMAGE_FIT
-  priority?:  boolean
-  reveal?:    boolean
-  caption?:   string
-  cursorView?: boolean
-}>(), {
-  fit:        'cover',
-  priority:   false,
-  reveal:     false,
-  cursorView: false,
-})
-
-const emit = defineEmits<{
-  load:  []
-  error: []
-}>()
-
-const isLoaded = ref(false)
-const { setState, reset } = useCursorState()
-
-const fitClass: Record<IMAGE_FIT, string> = {
-  cover:   'object-cover',
-  contain: 'object-contain',
-  fill:    'object-fill',
-}
-
-function onLoad(): void {
-  isLoaded.value = true
-  emit('load')
-}
-
-function onError(): void {
-  emit('error')
-}
+const avifSrc = computed(() => toAvifSrc(props.src))
 </script>
 
 <template>
-  <figure
-    class="group relative overflow-hidden"
-    :data-reveal="reveal || undefined"
-    @mouseenter="cursorView ? setState(CURSOR_STATE.VIEW) : undefined"
-    @mouseleave="cursorView ? reset() : undefined"
-  >
-    <NuxtImg
+  <!-- display:contents so the <img> inherits the caller's grid/flex box directly and
+       height utilities (h-full) resolve against the real parent, not the <picture>. -->
+  <picture class="contents">
+    <source :srcset="avifSrc" type="image/avif" />
+    <img
+      v-bind="$attrs"
       :src="src"
       :alt="alt"
       :width="width"
       :height="height"
-      :sizes="sizes ?? '100vw'"
-      :class="[
-        'w-full h-full transition-opacity duration-700',
-        fitClass[fit],
-        isLoaded ? 'opacity-100' : 'opacity-0',
-      ]"
-      :loading="priority ? 'eager' : 'lazy'"
-      :preload="priority"
-      format="avif"
-      quality="85"
-      @load="onLoad"
-      @error="onError"
+      :sizes="sizes"
+      :loading="eager ? 'eager' : 'lazy'"
+      :fetchpriority="eager ? 'high' : undefined"
+      decoding="async"
     />
-
-    <figcaption
-      v-if="caption"
-      class="mt-3 font-mono text-[10px] tracking-widest text-text-faint uppercase"
-    >
-      {{ caption }}
-    </figcaption>
-  </figure>
+  </picture>
 </template>

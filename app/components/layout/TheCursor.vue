@@ -56,15 +56,19 @@ watch(
   { immediate: true, flush: 'post' },
 )
 
-onUnmounted(() => {
-  document.documentElement.classList.remove('has-custom-cursor')
-})
+// ── Pointer follow — coalesced to one update per animation frame ──────────────
+// Native mousemove can fire far more often than the display refreshes; writing the
+// cursor transform on every event is wasted work. We stash the latest coordinates
+// and apply them once per rAF, so the cursor never does more than one write per frame.
+let pointerX  = 0
+let pointerY  = 0
+let moveRafId = 0
 
-useEventListener('mousemove', (e: MouseEvent) => {
-  if (!hasPointer.value || prefersReducedMotion.value) return
+function flushPointer(): void {
+  moveRafId = 0
 
   // The watch above can fire before Teleport patches the refs into the DOM, so
-  // retry here — the first real mousemove is the latest point at which the
+  // retry here — the first real pointer frame is the latest point at which the
   // cursor markup is guaranteed to exist.
   if (!initFollow()) return
 
@@ -72,17 +76,32 @@ useEventListener('mousemove', (e: MouseEvent) => {
   if (!dot) return
 
   // Dot follows exactly — no lag, instant feedback
-  gsap.set(dot, { x: e.clientX, y: e.clientY, xPercent: -50, yPercent: -50 })
+  gsap.set(dot, { x: pointerX, y: pointerY, xPercent: -50, yPercent: -50 })
 
   // Ring follows with eased lag via quickTo
-  xTo?.(e.clientX)
-  yTo?.(e.clientY)
+  xTo?.(pointerX)
+  yTo?.(pointerY)
 
   if (!isActive.value) {
     isActive.value = true
     show()
     gsap.to([dotRef.value, ringRef.value], { opacity: 1, duration: 0.4 })
   }
+}
+
+useEventListener('mousemove', (e: MouseEvent) => {
+  if (!hasPointer.value || prefersReducedMotion.value) return
+
+  pointerX = e.clientX
+  pointerY = e.clientY
+
+  if (moveRafId) return
+  moveRafId = requestAnimationFrame(flushPointer)
+})
+
+onUnmounted(() => {
+  if (moveRafId) cancelAnimationFrame(moveRafId)
+  document.documentElement.classList.remove('has-custom-cursor')
 })
 
 // Morph ring shape and size based on cursor state

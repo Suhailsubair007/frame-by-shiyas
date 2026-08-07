@@ -6,15 +6,25 @@ import { REELS }         from '@shared/constants/REELS'
 
 const { fadeUp, clipReveal } = useReveal()
 
+const sectionRef   = ref<HTMLElement | null>(null)
 const containerRef = ref<HTMLElement | null>(null)
 const eyebrowRef   = ref<HTMLElement | null>(null)
 const headingRef   = ref<HTMLElement | null>(null)
 const cardRefs     = ref<(HTMLElement | null)[]>([])
 const activeIndex  = ref(0)
+const isNear       = ref(false)
+
+const REEL_AUTOPLAY_INTERVAL_MS = 4_200
+// Begin loading reel videos when the section is within this margin of the viewport,
+// keeping their metadata fetches off the initial critical path.
+const REELS_PRELOAD_ROOT_MARGIN = '400px 0px'
+// Only cards this close to the active slot are promoted to their own compositor layer.
+const WILL_CHANGE_SLOT_RANGE = 1
 
 let cardWidth     = 0
 let containerMid  = 0   // = -(cardWidth / 2) — offset to center a card from left:50%
 let autoTimer:    ReturnType<typeof setInterval> | null = null
+let nearObserver: IntersectionObserver | null           = null
 let isPaused      = false
 let touchStartX   = 0
 let touchStartY   = 0
@@ -53,6 +63,12 @@ function getState(slot: number): { x: number; scale: number; opacity: number; zI
     opacity: cfg.opacity,
     zIndex:  cfg.zIndex,
   }
+}
+
+// Only the active card and its immediate neighbours get a will-change hint, so at most
+// three compositor layers exist at once instead of one permanent layer per card.
+function willChangeFor(cardIdx: number): string {
+  return Math.abs(getSlot(cardIdx)) <= WILL_CHANGE_SLOT_RANGE ? 'transform, opacity' : 'auto'
 }
 
 function measure(): void {
@@ -116,6 +132,20 @@ function onTouchEnd(e: TouchEvent): void {
 watch(activeIndex, () => placeCards(true))
 
 onMounted(() => {
+  // Defer loading the reel videos until the section nears the viewport.
+  if (sectionRef.value) {
+    nearObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        isNear.value = true
+        nearObserver?.disconnect()
+        nearObserver = null
+      },
+      { rootMargin: REELS_PRELOAD_ROOT_MARGIN },
+    )
+    nearObserver.observe(sectionRef.value)
+  }
+
   // Wait for layout paint so clientHeight is non-zero
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -124,7 +154,7 @@ onMounted(() => {
 
       autoTimer = setInterval(() => {
         if (!isPaused) advance()
-      }, 4200)
+      }, REEL_AUTOPLAY_INTERVAL_MS)
 
       nextTick(() => {
         fadeUp([eyebrowRef.value], {})
@@ -136,11 +166,13 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (autoTimer) clearInterval(autoTimer)
+  nearObserver?.disconnect()
 })
 </script>
 
 <template>
   <section
+    ref="sectionRef"
     class="overflow-hidden bg-void py-16 md:py-32"
     @mouseenter="isPaused = true"
     @mouseleave="isPaused = false"
@@ -179,7 +211,7 @@ onUnmounted(() => {
         :key="reel.id"
         :ref="(el) => { cardRefs[i] = el as HTMLElement | null }"
         class="absolute left-1/2 top-0 cursor-pointer"
-        :style="{ height: '100%', aspectRatio: '9/16', willChange: 'transform, opacity' }"
+        :style="{ height: '100%', aspectRatio: '9/16', willChange: willChangeFor(i) }"
         :aria-label="reel.title"
         role="button"
         :tabindex="i === activeIndex ? 0 : -1"
@@ -187,7 +219,7 @@ onUnmounted(() => {
         @keydown.enter="goTo(i)"
         @keydown.space.prevent="goTo(i)"
       >
-        <ReelCard :reel="reel" :is-active="i === activeIndex" />
+        <ReelCard :reel="reel" :is-active="i === activeIndex" :should-load="isNear" />
       </div>
     </div>
 

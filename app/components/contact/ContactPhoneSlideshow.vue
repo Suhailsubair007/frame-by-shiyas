@@ -17,6 +17,10 @@ type PHONE_SLIDE = SLIDE_PROFILE | SLIDE_GRID | SLIDE_PHOTO
 // ── Static data ───────────────────────────────────────────────────────────────
 const SLIDE_DURATION = 2_800 // ms each slide stays visible
 
+// Photo slides render at phone size — a single intrinsic size is plenty.
+const PHOTO_WIDTH  = 1280
+const PHOTO_HEIGHT = 1600
+
 const SLIDES: readonly PHONE_SLIDE[] = [
   { type: 'profile' },
   { type: 'grid' },
@@ -88,13 +92,13 @@ onUnmounted(() => {
 
         <!-- ── Profile slide ────────────────────────────────────── -->
         <template v-if="currentSlide.type === 'profile'">
-          <img
+          <BaseImage
             :src="ABOUT.PORTRAIT.src"
             alt=""
             :width="ABOUT.PORTRAIT.width"
             :height="ABOUT.PORTRAIT.height"
             class="h-full w-full object-cover object-top"
-            loading="eager"
+            eager
           />
           <div
             class="absolute inset-0"
@@ -135,13 +139,12 @@ onUnmounted(() => {
                 :key="thumb.src"
                 class="overflow-hidden"
               >
-                <img
+                <BaseImage
                   :src="thumb.src"
                   :alt="thumb.alt"
                   :width="thumb.width"
                   :height="thumb.height"
                   class="h-full w-full object-cover"
-                  loading="lazy"
                 />
               </div>
             </div>
@@ -150,13 +153,12 @@ onUnmounted(() => {
 
         <!-- ── Photo slide ───────────────────────────────────────── -->
         <template v-else>
-          <img
+          <BaseImage
             :src="photoSlide?.src ?? ''"
             :alt="photoSlide?.alt ?? ''"
+            :width="PHOTO_WIDTH"
+            :height="PHOTO_HEIGHT"
             class="h-full w-full object-cover object-center"
-            loading="lazy"
-            width="1280"
-            height="1600"
           />
           <div
             class="absolute inset-0"

@@ -22,6 +22,9 @@ const bioRefs      = ref<(HTMLElement | null)[]>([])
 const statsRef     = ref<HTMLElement | null>(null)
 const ctaRef       = ref<HTMLElement | null>(null)
 
+// Pre-baked AVIF sibling of the portrait — served to supporting browsers via <picture>.
+const portraitAvif = computed(() => toAvifSrc(ABOUT.PORTRAIT.src))
+
 onMounted(() => {
   nextTick(() => {
     clipReveal(imageWrapRef, { direction: 'right', duration: ANIMATION.DURATION.CINEMATIC })
@@ -52,16 +55,20 @@ onMounted(() => {
         ref="imageWrapRef"
         class="relative aspect-[2/3] overflow-hidden"
       >
-        <img
-          ref="imageRef"
-          :src="ABOUT.PORTRAIT.src"
-          :alt="ABOUT.PORTRAIT.alt"
-          :width="ABOUT.PORTRAIT.width"
-          :height="ABOUT.PORTRAIT.height"
-          class="h-full w-full scale-[1.08] object-cover"
-          loading="eager"
-          decoding="async"
-        />
+        <!-- display:contents so <img> stays the parallax target and fills the wrapper -->
+        <picture class="contents">
+          <source :srcset="portraitAvif" type="image/avif" />
+          <img
+            ref="imageRef"
+            :src="ABOUT.PORTRAIT.src"
+            :alt="ABOUT.PORTRAIT.alt"
+            :width="ABOUT.PORTRAIT.width"
+            :height="ABOUT.PORTRAIT.height"
+            class="h-full w-full scale-[1.08] object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
 
         <!-- Location caption — bottom left -->
         <p

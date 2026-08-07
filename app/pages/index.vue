@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { META }         from '@shared/constants/META'
-import { PHOTOGRAPHY }  from '@shared/constants/PHOTOGRAPHY'
-import { ABOUT }        from '@shared/constants/ABOUT'
 import { usePreloader } from '@/composables/usePreloader'
 
 definePageMeta({ layout: 'default' })
 
 const HERO_VIDEO  = 'https://cdn.muhmdshiyas.com/shiyas/Timeline%201website%201.mp4'
 const HERO_POSTER = 'https://cdn.muhmdshiyas.com/shiyas/2.jpg'
+
+// Hard cap so the splash never hangs on a slow or distant connection.
+const PRELOAD_TIMEOUT_MS = 4_000
 
 useSeoMeta({
   title:           META.DEFAULT_TITLE,
@@ -18,31 +19,31 @@ useSeoMeta({
   twitterCard:     'summary_large_image',
 })
 
-// Preload the hero poster so it's in cache before the hero mounts.
+// Preload the hero poster at high priority so it paints as the LCP element the instant
+// the splash lifts. The video is fetched by the <video preload="auto"> element itself
+// (started immediately by its in-view IntersectionObserver), so a separate
+// `rel=preload as=video` is intentionally omitted — it would double-fetch and steal
+// bandwidth from the poster on slow links, which is what made the poster linger.
 useHead({
   link: [
-    { rel: 'preload', as: 'image', href: HERO_POSTER },
-    { rel: 'preload', as: 'video', href: HERO_VIDEO, type: 'video/mp4' },
+    { rel: 'preload', as: 'image', href: HERO_POSTER, fetchpriority: 'high' },
   ],
 })
 
 const { signalAssetsReady, updateProgress } = usePreloader()
 
 onMounted(() => {
-  // All images that must be loaded before the splash dismisses.
-  // Hero poster (CDN) + every photography card + the about portrait.
-  const imageSrcs: readonly string[] = [
-    HERO_POSTER,
-    ...PHOTOGRAPHY.map(p => p.coverImage.src),
-    ABOUT.PORTRAIT.src,
-  ]
+  // Gate the splash ONLY on the hero poster + web fonts — the above-the-fold critical
+  // path. Below-the-fold photography/about imagery loads lazily on scroll (and is tiny
+  // now that it's AVIF), so it no longer blocks the reveal or inflates LCP.
+  const criticalImages: readonly string[] = [HERO_POSTER]
 
-  const total = imageSrcs.length
+  const total = criticalImages.length
   let loaded = 0
 
   updateProgress(0, total)
 
-  const imagePromises = imageSrcs.map(
+  const imagePromises = criticalImages.map(
     src => new Promise<void>((resolve) => {
       const img = new Image()
       img.onload  = () => { loaded++; updateProgress(loaded, total); resolve() }
@@ -51,8 +52,7 @@ onMounted(() => {
     }),
   )
 
-  // 4 s hard cap — prevents the splash hanging on slow or distant connections.
-  const timeout = new Promise<void>(resolve => setTimeout(resolve, 4_000))
+  const timeout = new Promise<void>(resolve => setTimeout(resolve, PRELOAD_TIMEOUT_MS))
 
   Promise.race([
     Promise.all([...imagePromises, document.fonts.ready]),

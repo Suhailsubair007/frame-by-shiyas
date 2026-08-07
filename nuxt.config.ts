@@ -6,7 +6,6 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
 
   modules: [
-    '@nuxt/image',
     '@nuxt/fonts',
     '@nuxt/eslint',
   ],
@@ -32,6 +31,12 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    // Ship Brotli + Gzip precompressed copies of every static asset so the host serves
+    // them directly instead of compressing per-request — smaller transfers, faster FCP.
+    compressPublicAssets: {
+      gzip: true,
+      brotli: true,
+    },
     prerender: {
       autoSubfolderIndex: false,
     },
@@ -43,18 +48,22 @@ export default defineNuxtConfig({
   },
 
   fonts: {
+    // Only the weights the design actually uses are requested — Playfair 500/600 and
+    // Inter 500 were unused and are dropped to cut font payload. @nuxt/fonts self-hosts
+    // each face with `font-display: swap` and injects size-adjust fallback metrics to
+    // keep the swap reflow (CLS) near zero.
     families: [
       {
         name: 'Playfair Display',
         provider: 'google',
-        weights: [400, 500, 600, 700],
+        weights: [400, 700],
         styles: ['normal', 'italic'],
         subsets: ['latin'],
       },
       {
         name: 'Inter',
         provider: 'google',
-        weights: [300, 400, 500],
+        weights: [300, 400],
         styles: ['normal'],
         subsets: ['latin'],
       },
@@ -66,18 +75,6 @@ export default defineNuxtConfig({
         subsets: ['latin'],
       },
     ],
-  },
-
-  image: {
-    quality: 85,
-    format: ['avif', 'webp'],
-    screens: {
-      sm: 640,
-      md: 768,
-      lg: 1024,
-      xl: 1280,
-      '2xl': 1536,
-    },
   },
 
   app: {
@@ -94,9 +91,15 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
-        // Resource hints — eliminate cold-connection latency for media domains
+        // Resource hints — warm TCP+TLS to the media origins before the hero video/poster
+        // and reel videos are requested. These MUST match the real domains: the hero
+        // streams from cdn.muhmdshiyas.com (previously had no hint at all — a key cause of
+        // the poster lingering on slow links) and reels from the R2 bucket. dns-prefetch
+        // is the graceful fallback for browsers that cap concurrent preconnects.
+        { rel: 'preconnect', href: 'https://cdn.muhmdshiyas.com' },
         { rel: 'preconnect', href: 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev' },
-        { rel: 'preconnect', href: 'https://res.cloudinary.com' },
+        { rel: 'dns-prefetch', href: 'https://cdn.muhmdshiyas.com' },
+        { rel: 'dns-prefetch', href: 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev' },
       ],
     },
     pageTransition: false,
