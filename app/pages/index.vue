@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { META }         from '@shared/constants/META'
+import { HERO_VIDEO as HERO_VIDEO_MEDIA } from '@shared/constants/MEDIA'
 import { usePreloader } from '@/composables/usePreloader'
 
 definePageMeta({ layout: 'default' })
 
-const HERO_VIDEO  = 'https://cdn.muhmdshiyas.com/shiyas/Timeline%201website%201.mp4'
-const HERO_POSTER = 'https://cdn.muhmdshiyas.com/shiyas/2.jpg'
+const HERO_VIDEO  = HERO_VIDEO_MEDIA.url
+const HERO_POSTER = HERO_VIDEO_MEDIA.poster ?? ''
 
 // Hard cap so the splash never hangs on a slow or distant connection.
 const PRELOAD_TIMEOUT_MS = 4_000

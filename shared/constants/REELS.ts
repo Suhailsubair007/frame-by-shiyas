@@ -1,13 +1,10 @@
-import type { REEL } from '@shared/types/Reel'
+import type { REEL }        from '@shared/types/Reel'
+import type { MEDIA_VIDEO } from '@shared/types/Media'
+import { REELS_VIDEOS }     from '@shared/constants/MEDIA'
 
-const R2 = 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev/shiyas'
+// The reels carousel is a projection of the centralised reel videos (V1–V23).
+function toReel(video: MEDIA_VIDEO): REEL {
+  return { id: video.id, title: video.title, videoUrl: video.url }
+}
 
-export const REELS: readonly REEL[] = [
-  { id: 'r1', title: 'Creator Reel',     videoUrl: `${R2}/T1.mp4` },
-  { id: 'r2', title: 'Drive Film',       videoUrl: `${R2}/T2.mp4` },
-  { id: 'r3', title: 'Grooming & Style', videoUrl: `${R2}/T3.mp4` },
-  { id: 'r4', title: 'Pour & Place',     videoUrl: `${R2}/T4.mp4` },
-  { id: 'r5', title: 'Food Stories',     videoUrl: `${R2}/T5.mp4` },
-  { id: 'r6', title: 'Look Book',        videoUrl: `${R2}/T6.mp4` },
-  { id: 'r7', title: 'The Grind',        videoUrl: `${R2}/T7.mp4` },
-] as const
+export const REELS: readonly REEL[] = REELS_VIDEOS.map(toReel)
