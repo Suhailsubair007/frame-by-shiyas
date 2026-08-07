@@ -74,8 +74,6 @@ onMounted(() => {
 
     <ReelsSection id="reels" />
 
-    <!-- <FilmsSection id="films" /> -->
-
     <PhotographySection id="photography" />
 
     <AboutSection id="about" />
