@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { META }         from '@shared/constants/META'
 import { HERO_VIDEO as HERO_VIDEO_MEDIA } from '@shared/constants/MEDIA'
 import { usePreloader } from '@/composables/usePreloader'
 
@@ -11,14 +10,8 @@ const HERO_POSTER = HERO_VIDEO_MEDIA.poster ?? ''
 // Hard cap so the splash never hangs on a slow or distant connection.
 const PRELOAD_TIMEOUT_MS = 4_000
 
-useSeoMeta({
-  title:           META.DEFAULT_TITLE,
-  description:     META.DEFAULT_DESCRIPTION,
-  ogTitle:         META.DEFAULT_TITLE,
-  ogDescription:   META.DEFAULT_DESCRIPTION,
-  ogImage:         META.OG_IMAGE,
-  twitterCard:     'summary_large_image',
-})
+// All head/meta + schema.org structured data — see composables/useSeo.ts
+useSeo()
 
 // Preload the hero poster at high priority so it paints as the LCP element the instant
 // the splash lifts. The video is fetched by the <video preload="auto"> element itself
