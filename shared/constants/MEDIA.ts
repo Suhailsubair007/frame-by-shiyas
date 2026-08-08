@@ -19,7 +19,7 @@ const REELS_VIDEO_COUNT = 23
 
 const CATEGORY_LABEL: Readonly<Record<GALLERY_CATEGORY, string>> = {
   [GALLERY_CATEGORY.FOOD]:    'Food',
-  [GALLERY_CATEGORY.OUTDOOR]: 'Outdoor',
+  [GALLERY_CATEGORY.OUTDOOR]: 'Portraits',
   [GALLERY_CATEGORY.PRODUCT]: 'Product',
 }
 

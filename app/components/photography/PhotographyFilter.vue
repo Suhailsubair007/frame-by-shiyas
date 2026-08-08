@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { GALLERY_CATEGORY } from '@shared/enums/GalleryCategory'
 
-const props = defineProps<{
+defineProps<{
   active: GALLERY_CATEGORY | null
 }>()
 
@@ -12,7 +12,7 @@ const emit = defineEmits<{
 // Display labels map — avoids repeating .replace(/_/g, ' ') in template
 const CATEGORY_LABELS: Readonly<Record<GALLERY_CATEGORY, string>> = {
   [GALLERY_CATEGORY.FOOD]:    'Food',
-  [GALLERY_CATEGORY.OUTDOOR]: 'Outdoor',
+  [GALLERY_CATEGORY.OUTDOOR]: 'Portraits',
   [GALLERY_CATEGORY.PRODUCT]: 'Product',
 }
 
