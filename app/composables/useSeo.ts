@@ -18,7 +18,9 @@ export function useSeo(): void {
     ogType:            'website',
     ogUrl:             url,
     ogSiteName:        META.SITE_NAME,
-    ogLocale:          'en_US',
+    // Primary market UAE, secondary India — signalled to social scrapers.
+    ogLocale:          'en_AE',
+    ogLocaleAlternate: ['en_IN'],
     ogImage:           image,
     ogImageAlt:        META.OG_IMAGE_ALT,
     ogImageType:       'image/jpeg',
@@ -33,24 +35,35 @@ export function useSeo(): void {
   // Person + business + website graph. Google reads this to understand *who*
   // Muhammed Shiyas is (local-service context, service area, socials) — the
   // groundwork for rich results and a Knowledge Panel.
+  const postalAddress = {
+    '@type':         'PostalAddress',
+    addressLocality: META.ADDRESS_LOCALITY,
+    addressRegion:   META.ADDRESS_LOCALITY,
+    addressCountry:  META.ADDRESS_COUNTRY,
+  }
+
+  // areaServed ordered UAE-first, then India — Google reads the ordering as
+  // the primary-to-secondary service-market priority.
+  const areaServed = META.SERVICE_AREAS.map(area => ({ '@type': area.type, name: area.name }))
+
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Person',
         '@id':   `${url}/#person`,
-        name:        META.OWNER,
+        name:          META.OWNER,
         url,
         image,
-        jobTitle:    META.JOB_TITLE,
-        description: META.DEFAULT_DESCRIPTION,
-        worksFor:    { '@id': `${url}/#business` },
-        sameAs:      [CONTACT.INSTAGRAM],
-        address: {
-          '@type':         'PostalAddress',
-          addressLocality: META.ADDRESS_LOCALITY,
-          addressCountry:  META.ADDRESS_COUNTRY,
-        },
+        jobTitle:      META.JOB_TITLE,
+        description:   META.DEFAULT_DESCRIPTION,
+        worksFor:      { '@id': `${url}/#business` },
+        sameAs:        [CONTACT.INSTAGRAM],
+        knowsLanguage: META.LANGUAGES,
+        knowsAbout:    META.SERVICES,
+        homeLocation:  { '@type': 'Place', name: `${META.ADDRESS_LOCALITY}, United Arab Emirates` },
+        workLocation:  { '@type': 'Place', name: 'United Arab Emirates' },
+        address:       postalAddress,
       },
       {
         '@type': ['ProfessionalService', 'LocalBusiness'],
@@ -63,12 +76,29 @@ export function useSeo(): void {
         description: META.DEFAULT_DESCRIPTION,
         priceRange:  '$$',
         founder:     { '@id': `${url}/#person` },
-        areaServed:  META.AREA_SERVED,
         sameAs:      [CONTACT.INSTAGRAM],
-        address: {
-          '@type':         'PostalAddress',
-          addressLocality: META.ADDRESS_LOCALITY,
-          addressCountry:  META.ADDRESS_COUNTRY,
+        knowsAbout:  META.SERVICES,
+        address:     postalAddress,
+        areaServed,
+        geo: {
+          '@type':   'GeoCoordinates',
+          latitude:  META.GEO.LATITUDE,
+          longitude: META.GEO.LONGITUDE,
+        },
+        contactPoint: {
+          '@type':           'ContactPoint',
+          telephone:         CONTACT.PHONE_TEL,
+          contactType:       'customer service',
+          areaServed:        [META.ADDRESS_COUNTRY, 'IN'],
+          availableLanguage: META.LANGUAGES,
+        },
+        hasOfferCatalog: {
+          '@type': 'OfferCatalog',
+          name:    'Videography & Photography Services',
+          itemListElement: META.SERVICES.map(name => ({
+            '@type':      'Offer',
+            itemOffered:  { '@type': 'Service', name, areaServed: 'United Arab Emirates' },
+          })),
         },
       },
       {
@@ -83,7 +113,14 @@ export function useSeo(): void {
   }
 
   useHead({
-    link:   [{ rel: 'canonical', href: url }],
+    link: [{ rel: 'canonical', href: url }],
+    meta: [
+      { name: 'keywords',     content: META.KEYWORDS },
+      { name: 'geo.region',   content: META.GEO.REGION },
+      { name: 'geo.placename', content: META.GEO.PLACENAME },
+      { name: 'geo.position', content: `${META.GEO.LATITUDE};${META.GEO.LONGITUDE}` },
+      { name: 'ICBM',         content: `${META.GEO.LATITUDE}, ${META.GEO.LONGITUDE}` },
+    ],
     script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(schema) }],
   })
 }
