@@ -152,7 +152,7 @@ function onNavClick(hash: string): void {
     >
       <div class="flex gap-5">
         <a
-          href="https://instagram.com"
+          href="https://www.instagram.com/muhmdshiyas/?hl=en"
           target="_blank"
           rel="noopener noreferrer"
           class="font-mono text-[10px] uppercase tracking-widest text-text-faint transition-colors duration-300 hover:text-text"

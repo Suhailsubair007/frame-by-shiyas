@@ -15,7 +15,7 @@ export const CONTACT = {
   TAGLINE:  'Available for advertising campaigns, weddings, corporate productions, and social media content across the UAE and beyond.',
 
   SOCIALS: [
-    { label: 'Instagram', url: 'https://instagram.com/framebyshiyas' },
+    { label: 'Instagram', url: 'https://www.instagram.com/muhmdshiyas/?hl=en' },
     { label: 'Vimeo',     url: 'https://vimeo.com/framebyshiyas'     },
     { label: 'YouTube',   url: 'https://youtube.com/@framebyshiyas'  },
   ],
