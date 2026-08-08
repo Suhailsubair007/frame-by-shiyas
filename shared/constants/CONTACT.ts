@@ -14,7 +14,5 @@ export const CONTACT = {
   HEADING_FOOT: 'Together.',
   TAGLINE:  'Available for advertising campaigns, weddings, corporate productions, and social media content across the UAE and beyond.',
 
-  SOCIALS: [
-    { label: 'Instagram', url: 'https://www.instagram.com/muhmdshiyas/?hl=en' },
-  ],
+  INSTAGRAM: 'https://www.instagram.com/muhmdshiyas/?hl=en',
 } as const

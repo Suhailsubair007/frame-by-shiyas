@@ -88,16 +88,41 @@ onMounted(() => {
         </a>
 
         <!-- Social links -->
-        <nav ref="socialsRef" aria-label="Social links" class="opacity-0">
-          <ul class="flex flex-wrap gap-8">
-            <li v-for="social in CONTACT.SOCIALS" :key="social.label">
+        <nav ref="socialsRef" aria-label="Contact links" class="opacity-0">
+          <ul class="flex flex-wrap items-center gap-8">
+            <li>
               <a
-                :href="social.url"
+                :href="CONTACT.INSTAGRAM"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted transition-colors duration-300 hover:text-text"
+                aria-label="Instagram"
+                class="group flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted transition-colors duration-300 hover:text-accent"
               >
-                {{ social.label }}
+                <svg
+                  class="h-4 w-4 transition-transform duration-300 group-hover:scale-110"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a
+                :href="META.WORKS_URL"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.25em] text-text-muted transition-colors duration-300 hover:text-accent"
+              >
+                Additional Works
                 <span
                   class="inline-block transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                   aria-hidden="true"
