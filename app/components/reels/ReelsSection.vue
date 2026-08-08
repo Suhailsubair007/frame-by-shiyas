@@ -33,10 +33,13 @@ let touchStartY   = 0
 // xMult is multiplied by cardWidth and added to containerMid (= -cardWidth/2).
 // At xMult 0.92 the adjacent card's visual left edge clears the center card's
 // right edge by ~3% of cardWidth — eliminating overlap while keeping depth.
-const SLOT: Record<number, { xMult: number; scale: number; opacity: number; zIndex: number }> = {
-  0: { xMult: 0,    scale: 1.00, opacity: 1.00, zIndex: 4 },
-  1: { xMult: 0.92, scale: 0.78, opacity: 0.65, zIndex: 3 },
-  2: { xMult: 1.58, scale: 0.60, opacity: 0.30, zIndex: 2 },
+// Cards stay fully opaque and recede via `dim` (a dark scrim), never via
+// element opacity — two translucent cards overlapping would otherwise reveal a
+// see-through seam. `dim` roughly mirrors the old opacity recession (1 - opacity).
+const SLOT: Record<number, { xMult: number; scale: number; dim: number; zIndex: number }> = {
+  0: { xMult: 0,    scale: 1.00, dim: 0.00, zIndex: 4 },
+  1: { xMult: 0.92, scale: 0.78, dim: 0.42, zIndex: 3 },
+  2: { xMult: 1.58, scale: 0.60, dim: 0.68, zIndex: 2 },
 }
 
 function getSlot(cardIdx: number): number {
@@ -51,7 +54,8 @@ function getState(slot: number): { x: number; scale: number; opacity: number; zI
   const absSlot = Math.abs(slot)
   const sign    = slot >= 0 ? 1 : -1
 
-  // Cards beyond ±2 are hidden off to the side
+  // Cards beyond ±2 are hidden off to the side — opacity fade is only for the
+  // off-stage exit; visible cards (±2) stay fully opaque and recede via `dim`.
   if (absSlot > 2) {
     return { x: containerMid + sign * cardWidth * 2.0, scale: 0.55, opacity: 0, zIndex: 1 }
   }
@@ -60,9 +64,16 @@ function getState(slot: number): { x: number; scale: number; opacity: number; zI
   return {
     x:       containerMid + sign * cardWidth * cfg.xMult,
     scale:   cfg.scale,
-    opacity: cfg.opacity,
+    opacity: 1,
     zIndex:  cfg.zIndex,
   }
+}
+
+// Darkness applied to each card via its scrim overlay, based on its slot.
+function dimFor(cardIdx: number): number {
+  const absSlot = Math.abs(getSlot(cardIdx))
+  if (absSlot > 2) return 1
+  return SLOT[absSlot]!.dim
 }
 
 // Only the active card and its immediate neighbours get a will-change hint, so at most
@@ -219,7 +230,7 @@ onUnmounted(() => {
         @keydown.enter="goTo(i)"
         @keydown.space.prevent="goTo(i)"
       >
-        <ReelCard :reel="reel" :is-active="i === activeIndex" :should-load="isNear" />
+        <ReelCard :reel="reel" :is-active="i === activeIndex" :should-load="isNear" :dim="dimFor(i)" />
       </div>
     </div>
 

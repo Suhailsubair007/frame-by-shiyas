@@ -5,9 +5,11 @@ const props = withDefaults(defineProps<{
   reel:        REEL
   isActive?:   boolean
   shouldLoad?: boolean
+  dim?:        number
 }>(), {
   isActive:    false,
   shouldLoad:  false,
+  dim:         0,
 })
 
 const videoRef = ref<HTMLVideoElement | null>(null)
@@ -37,7 +39,7 @@ function onLoadedMetadata(): void {
 </script>
 
 <template>
-  <div class="relative h-full w-full overflow-hidden rounded-2xl">
+  <div class="relative h-full w-full overflow-hidden rounded-2xl bg-black">
     <!-- Video — src binds only once the section nears the viewport (shouldLoad), so the
          seven reel videos are not all fetched on initial page load. Inactive cards keep
          preload="metadata" to show their first frame; the active card plays. -->
@@ -58,6 +60,14 @@ function onLoadedMetadata(): void {
     <div
       class="absolute inset-0"
       style="background: linear-gradient(to bottom, transparent 40%, oklch(4% 0 0 / 0.8) 100%);"
+      aria-hidden="true"
+    />
+
+    <!-- Depth dim — inactive cards recede by darkening rather than turning
+         translucent, so overlapping cards never reveal a see-through seam. -->
+    <div
+      class="pointer-events-none absolute inset-0 bg-void transition-opacity duration-700 motion-reduce:transition-none"
+      :style="{ opacity: dim }"
       aria-hidden="true"
     />
 
