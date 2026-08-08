@@ -34,6 +34,10 @@ onMounted(() => {
 <template>
   <section class="relative flex min-h-screen flex-col bg-void">
 
+    <!-- Content is capped and centred so ultra-wide monitors don't leave a huge
+         dead gap between the text and the phone mockup. -->
+    <div class="mx-auto flex w-full max-w-[1600px] flex-1 flex-col">
+
     <!-- Section rule -->
     <div class="mx-6 h-px bg-border md:mx-10" aria-hidden="true" />
 
@@ -178,5 +182,6 @@ onMounted(() => {
       </nav>
     </footer>
 
+    </div>
   </section>
 </template>
