@@ -15,5 +15,8 @@
     <ThePageTransition>
       <slot />
     </ThePageTransition>
+
+    <!-- Floating quick-contact dock — call, WhatsApp, email, jump to contact -->
+    <TheContactDock />
   </div>
 </template>
