@@ -16,7 +16,5 @@ export const CONTACT = {
 
   SOCIALS: [
     { label: 'Instagram', url: 'https://www.instagram.com/muhmdshiyas/?hl=en' },
-    { label: 'Vimeo',     url: 'https://vimeo.com/framebyshiyas'     },
-    { label: 'YouTube',   url: 'https://youtube.com/@framebyshiyas'  },
   ],
 } as const
