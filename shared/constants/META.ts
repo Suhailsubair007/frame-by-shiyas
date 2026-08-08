@@ -9,6 +9,7 @@ export const META = {
   TWITTER_HANDLE:      '@framebyshiyas',
   BASE_URL:            'https://framebyshiyas.com',
   EMAIL:               'm1shiyas1@gmail.com',
+  WORKS_URL:           'https://drive.google.com/drive/folders/19ChoROaaYKoOcms9ksamDZhjHyLnhZmT',
 } as const
 
 // Single-page site — nav items scroll to in-page section anchors, not routes.

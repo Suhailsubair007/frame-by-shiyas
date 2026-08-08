@@ -169,6 +169,19 @@ function onNavClick(hash: string): void {
         >
           Vimeo
         </a>
+        <a
+          :href="META.WORKS_URL"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-text-faint transition-colors duration-300 hover:text-text"
+          :tabindex="isOpen ? 0 : -1"
+        >
+          Additional Works
+          <span
+            class="inline-block transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            aria-hidden="true"
+          >↗</span>
+        </a>
       </div>
 
       <span class="font-mono text-[10px] tracking-widest text-text-faint">
