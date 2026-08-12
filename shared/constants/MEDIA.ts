@@ -1,4 +1,4 @@
-import type { MEDIA_IMAGE, MEDIA_VIDEO } from '@shared/types/Media'
+import type { MEDIA_IMAGE, MEDIA_VIDEO, MEDIA_FILM } from '@shared/types/Media'
 import { GALLERY_CATEGORY }              from '@shared/enums/GalleryCategory'
 
 // ── CDN roots ────────────────────────────────────────────────────────────────
@@ -16,6 +16,11 @@ const IMAGE_HEIGHT = 1600
 // The showreel is the last clip; everything before it feeds the reels carousel.
 const HERO_VIDEO_INDEX = 24
 const REELS_VIDEO_COUNT = 23
+
+// Landscape films rail — 16:9 clips (L1–Ln) that autoplay when scrolled into view.
+const FILM_COUNT        = 4
+const FILM_IMAGE_WIDTH  = 1920
+const FILM_IMAGE_HEIGHT = 1080
 
 const CATEGORY_LABEL: Readonly<Record<GALLERY_CATEGORY, string>> = {
   [GALLERY_CATEGORY.FOOD]:    'Food',
@@ -61,6 +66,15 @@ function buildVideo(index: number): MEDIA_VIDEO {
   }
 }
 
+function buildFilm(index: number): MEDIA_FILM {
+  return {
+    id:       `f${index}`,
+    videoUrl: `${VIDEO_BASE}/L${index}.mp4`,
+    width:    FILM_IMAGE_WIDTH,
+    height:   FILM_IMAGE_HEIGHT,
+  }
+}
+
 // ── Image galleries ──────────────────────────────────────────────────────────
 // P10 is intentionally absent from the Food set — the asset does not exist.
 export const FOOD_GALLERY:    readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.FOOD,    range(1, 12, [10]))
@@ -89,3 +103,6 @@ export const HERO_VIDEO: MEDIA_VIDEO = {
 }
 
 export const REELS_VIDEOS: readonly MEDIA_VIDEO[] = range(1, REELS_VIDEO_COUNT).map(buildVideo)
+
+// ── Films ──────────────────────────────────────────────────────────────────
+export const FILMS_MEDIA: readonly MEDIA_FILM[] = range(1, FILM_COUNT).map(buildFilm)

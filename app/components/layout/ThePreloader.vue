@@ -3,9 +3,11 @@ import { gsap }             from 'gsap'
 import { usePreloader }     from '@/composables/usePreloader'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
+import { ROUTES }           from '@shared/constants/ROUTES'
 
-const { isFirstVisit, canWipe, progress, signalAnimationReady, complete } = usePreloader()
+const { isFirstVisit, canWipe, progress, signalAnimationReady, signalAssetsReady, complete } = usePreloader()
 const prefersReducedMotion = useReducedMotion()
+const route = useRoute()
 
 const overlayRef  = ref<HTMLElement | null>(null)
 const brandRef    = ref<HTMLElement | null>(null)
@@ -49,6 +51,12 @@ onMounted(() => {
     complete()
     return
   }
+
+  // Only the home page gates the wipe on a specific above-the-fold asset (the
+  // hero poster, wired in index.vue). Every other route has no such gate, so mark
+  // assets ready here — otherwise the splash's asset gate never resolves and the
+  // overlay hangs forever on a direct load of e.g. /films.
+  if (route.path !== ROUTES.HOME) signalAssetsReady()
 
   // Phase 1: aperture opens, then the brand racks into focus (~1 s floor).
   // The progress line + frame counter track real asset loading — no GSAP needed.

@@ -8,38 +8,52 @@ import { ANIMATION } from '@shared/constants/ANIMATION'
 const prefersReducedMotion = useReducedMotion()
 const { stop, start, scrollToTop } = useLenis()
 
-const curtainRef   = ref<HTMLElement | null>(null)
-const route        = useRoute()
-const isAnimating  = ref(false)
+const curtainRef  = ref<HTMLElement | null>(null)
+const route       = useRoute()
+const isAnimating = ref(false)
 
-// Page leave — curtain sweeps in from bottom, covering the old page
-function onBeforeLeave(): void {
-  if (prefersReducedMotion.value) return
-  isAnimating.value = true
-  stop()
-
-  const curtain = curtainRef.value
-  if (!curtain) return
-
-  gsap.fromTo(
-    curtain,
-    { yPercent: 100 },
-    {
-      yPercent: 0,
-      duration: ANIMATION.DURATION.CINEMATIC,
-      ease:     ANIMATION.EASE.CINEMA,
-    },
-  )
-}
-
-// New page enters — curtain sweeps out upward revealing new content
-function onEnter(el: Element, done: () => void): void {
+// Leave — curtain sweeps up from the bottom to fully cover the outgoing page.
+// Calling `done` is what tells Vue (mode="out-in") the leave has finished, so the
+// page swap happens ONLY once the screen is covered — never mid-reveal. Running
+// this on @leave (not @before-leave) is the difference: @before-leave cannot
+// gate the swap, which left the reveal racing the cover and the curtain stuck.
+function onLeave(_el: Element, done: () => void): void {
   if (prefersReducedMotion.value) {
     done()
     return
   }
 
+  const curtain = curtainRef.value
+  if (!curtain) {
+    done()
+    return
+  }
+
+  isAnimating.value = true
+  stop()
+
+  gsap.fromTo(
+    curtain,
+    { yPercent: 100 },
+    {
+      yPercent:   0,
+      duration:   ANIMATION.DURATION.DEFAULT,
+      ease:       ANIMATION.EASE.CINEMA,
+      onComplete: done,
+    },
+  )
+}
+
+// Enter — the new page is already mounted behind the covering curtain. Jump to
+// the top, then sweep the curtain off the top edge to reveal it, and restore
+// scrolling once it is clear.
+function onEnter(_el: Element, done: () => void): void {
   scrollToTop(true)
+
+  if (prefersReducedMotion.value) {
+    done()
+    return
+  }
 
   const curtain = curtainRef.value
   if (!curtain) {
@@ -49,10 +63,11 @@ function onEnter(el: Element, done: () => void): void {
 
   gsap.to(curtain, {
     yPercent: -100,
-    duration: ANIMATION.DURATION.CINEMATIC,
+    duration: ANIMATION.DURATION.DEFAULT,
     ease:     ANIMATION.EASE.CINEMA,
-    delay:    0.1,
     onComplete: () => {
+      // Reset below the fold for the next navigation, restore scroll, and
+      // recompute ScrollTrigger positions against the freshly revealed page.
       gsap.set(curtain, { yPercent: 100 })
       isAnimating.value = false
       start()
@@ -60,10 +75,6 @@ function onEnter(el: Element, done: () => void): void {
       done()
     },
   })
-}
-
-function onAfterEnter(): void {
-  isAnimating.value = false
 }
 
 // Expose isAnimating so nav can disable links during transition
@@ -83,9 +94,8 @@ defineExpose({ isAnimating: readonly(isAnimating) })
     <Transition
       mode="out-in"
       :css="false"
-      @before-leave="onBeforeLeave"
+      @leave="onLeave"
       @enter="onEnter"
-      @after-enter="onAfterEnter"
     >
       <!-- Keyed wrapper guarantees Transition always sees a single element child.
            Without it, RouterView can resolve to a comment node mid-swap, which

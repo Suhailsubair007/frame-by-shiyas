@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { HERO_VIDEO as HERO_VIDEO_MEDIA } from '@shared/constants/MEDIA'
 import { usePreloader } from '@/composables/usePreloader'
+import { useLenis } from '@/composables/useLenis'
+import { ANIMATION } from '@shared/constants/ANIMATION'
+import { LAYOUT } from '@shared/constants/LAYOUT'
 
 definePageMeta({ layout: 'default' })
 
@@ -9,6 +12,13 @@ const HERO_POSTER = HERO_VIDEO_MEDIA.poster ?? ''
 
 // Hard cap so the splash never hangs on a slow or distant connection.
 const PRELOAD_TIMEOUT_MS = 4_000
+
+// A hash means we arrived from a sub-page nav click; wait for the route curtain
+// to finish sweeping out (it resets scroll to top on enter) before scrolling.
+const HASH_SCROLL_DELAY_MS = (ANIMATION.DURATION.CINEMATIC + 0.3) * 1_000
+
+const route = useRoute()
+const { scrollTo } = useLenis()
 
 // All head/meta + schema.org structured data — see composables/useSeo.ts
 useSeo()
@@ -55,6 +65,13 @@ onMounted(() => {
     .then(() => signalAssetsReady())
     .catch(() => signalAssetsReady())
 })
+
+onMounted(() => {
+  if (!route.hash) return
+  setTimeout(() => {
+    scrollTo(route.hash, { offset: -LAYOUT.HEADER_OFFSET })
+  }, HASH_SCROLL_DELAY_MS)
+})
 </script>
 
 <template>
@@ -64,6 +81,8 @@ onMounted(() => {
       :video-src="HERO_VIDEO"
       :video-poster="HERO_POSTER"
     />
+
+    <FilmsSection id="films" />
 
     <ReelsSection id="reels" />
 

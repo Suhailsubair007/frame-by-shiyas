@@ -36,3 +36,22 @@ export const PHOTOGRAPHY_ALL: readonly PROJECT_LIST_ITEM[] = interleave([
   OUTDOOR_GALLERY.map(toProject),
   PRODUCT_GALLERY.map(toProject),
 ])
+
+// Curated picks previewed on the home page before "View all". Edit these ids to
+// promote your best frames — each must match a PHOTOGRAPHY item id (e.g. `outdoor-3`).
+const FEATURED_PHOTOGRAPHY_IDS: readonly string[] = [
+  'outdoor-1',
+  'food-1',
+  'product-1',
+  'outdoor-5',
+  'food-4',
+  'product-6',
+]
+
+const PHOTOGRAPHY_BY_ID: ReadonlyMap<string, PROJECT_LIST_ITEM> = new Map(
+  PHOTOGRAPHY.map(project => [project.id, project]),
+)
+
+export const FEATURED_PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = FEATURED_PHOTOGRAPHY_IDS
+  .map(id => PHOTOGRAPHY_BY_ID.get(id))
+  .filter((project): project is PROJECT_LIST_ITEM => project !== undefined)

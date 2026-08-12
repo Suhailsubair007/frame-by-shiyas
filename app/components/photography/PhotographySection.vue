@@ -1,22 +1,14 @@
 <script setup lang="ts">
-import { usePhotography }   from '@/composables/usePhotography'
 import { useReveal }        from '@/composables/useReveal'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
-import type { GALLERY_CATEGORY } from '@shared/enums/GalleryCategory'
+import { ROUTES }           from '@shared/constants/ROUTES'
+import { FEATURED_PHOTOGRAPHY } from '@shared/constants/PHOTOGRAPHY'
 
-const { filterByCategory } = usePhotography()
 const { fadeUp, clipReveal } = useReveal()
-
-const activeCategory = ref<GALLERY_CATEGORY | null>(null)
-const filteredProjects = computed(() => filterByCategory(activeCategory.value))
 
 const eyebrowRef = ref<HTMLElement | null>(null)
 const headingRef = ref<HTMLElement | null>(null)
 const ctaRef     = ref<HTMLElement | null>(null)
-
-function onFilterChange(category: GALLERY_CATEGORY | null): void {
-  activeCategory.value = category
-}
 
 onMounted(() => {
   nextTick(() => {
@@ -47,19 +39,17 @@ onMounted(() => {
         </h2>
       </div>
 
-      <!-- Filter -->
-      <div ref="ctaRef" class="flex flex-col items-start gap-6 opacity-0 md:items-end">
-        <PhotographyFilter
-          :active="activeCategory"
-          @change="onFilterChange"
-        />
+      <div ref="ctaRef" class="opacity-0 md:pb-4">
+        <BaseButton :href="ROUTES.PHOTOGRAPHY" variant="text">
+          View all photography
+        </BaseButton>
       </div>
     </div>
 
-    <!-- ── Grid ─────────────────────────────────────────────────────────── -->
+    <!-- ── Featured grid ────────────────────────────────────────────────── -->
     <div class="mt-12 grid grid-cols-1 gap-4 px-6 md:mt-16 md:grid-cols-2 md:gap-6 md:px-10">
       <PhotographyCard
-        v-for="(project, i) in filteredProjects"
+        v-for="(project, i) in FEATURED_PHOTOGRAPHY"
         :key="project.id"
         :project="project"
         :class="i % 2 === 1 ? 'md:mt-20' : ''"
