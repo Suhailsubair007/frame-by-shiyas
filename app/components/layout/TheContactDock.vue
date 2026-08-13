@@ -114,9 +114,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <!-- When closed, the fan links are only opacity:0 — still on top of the page and
+       clickable. Disabling pointer events lets clicks pass through to the content
+       underneath (e.g. the "View all" CTAs); the toggle re-enables its own. -->
   <div
     ref="rootRef"
     class="fixed bottom-6 right-6 flex flex-col items-end gap-3"
+    :class="{ 'pointer-events-none': !isOpen }"
     style="z-index: var(--z-sticky);"
   >
     <!-- Icon sprite — defined once, referenced by every action via <use> -->
@@ -185,10 +189,10 @@ onBeforeUnmount(() => {
       </li>
     </ul>
 
-    <!-- Toggle FAB -->
+    <!-- Toggle FAB — always interactive, even while the fan above is click-through -->
     <button
       type="button"
-      class="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-void shadow-lg shadow-black/30 transition-transform duration-300 ease-expo hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+      class="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-void shadow-lg shadow-black/30 transition-transform duration-300 ease-expo hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-void"
       :aria-expanded="isOpen"
       aria-label="Contact quick actions"
       aria-controls="contact-dock-actions"

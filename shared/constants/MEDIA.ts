@@ -1,4 +1,4 @@
-import type { MEDIA_IMAGE, MEDIA_VIDEO } from '@shared/types/Media'
+import type { MEDIA_IMAGE, MEDIA_VIDEO, MEDIA_FILM } from '@shared/types/Media'
 import { GALLERY_CATEGORY }              from '@shared/enums/GalleryCategory'
 
 // ── CDN roots ────────────────────────────────────────────────────────────────
@@ -16,6 +16,11 @@ const IMAGE_HEIGHT = 1600
 // The showreel is the last clip; everything before it feeds the reels carousel.
 const HERO_VIDEO_INDEX = 24
 const REELS_VIDEO_COUNT = 23
+
+// Landscape films rail — 16:9 clips (L1–Ln) that autoplay when scrolled into view.
+const FILM_COUNT        = 4
+const FILM_IMAGE_WIDTH  = 1920
+const FILM_IMAGE_HEIGHT = 1080
 
 const CATEGORY_LABEL: Readonly<Record<GALLERY_CATEGORY, string>> = {
   [GALLERY_CATEGORY.FOOD]:    'Food',
@@ -53,6 +58,30 @@ function buildImageGallery(
   return frames.map(frame => buildImage(category, frame))
 }
 
+// Landscape stills (LI-001…LI-011) added to the photography grid. Their true 3:2
+// dimensions are kept so <img> reserves the right box; the grid's portrait cards
+// centre-crop them via object-cover.
+const LANDSCAPE_IMAGE_COUNT  = 11
+const LANDSCAPE_IMAGE_WIDTH  = 1600
+const LANDSCAPE_IMAGE_HEIGHT = 1067
+
+function buildLandscapeImage(index: number): MEDIA_IMAGE {
+  const frame = String(index).padStart(3, '0')
+  return {
+    id:       `landscape-${index}`,
+    url:      `${IMAGE_BASE}/landscape/LI-${frame}.webp`,
+    title:    `Landscape ${index}`,
+    alt:      `Landscape photography by Muhammed Shiyas — Sharjah, UAE`,
+    category: GALLERY_CATEGORY.OUTDOOR,
+    width:    LANDSCAPE_IMAGE_WIDTH,
+    height:   LANDSCAPE_IMAGE_HEIGHT,
+    tags:     ['landscape'],
+  }
+}
+
+const LANDSCAPE_IMAGES: readonly MEDIA_IMAGE[] =
+  range(1, LANDSCAPE_IMAGE_COUNT).map(buildLandscapeImage)
+
 function buildVideo(index: number): MEDIA_VIDEO {
   return {
     id:    `v${index}`,
@@ -61,10 +90,23 @@ function buildVideo(index: number): MEDIA_VIDEO {
   }
 }
 
+function buildFilm(index: number): MEDIA_FILM {
+  return {
+    id:       `f${index}`,
+    videoUrl: `${VIDEO_BASE}/L${index}.mp4`,
+    width:    FILM_IMAGE_WIDTH,
+    height:   FILM_IMAGE_HEIGHT,
+  }
+}
+
 // ── Image galleries ──────────────────────────────────────────────────────────
 // P10 is intentionally absent from the Food set — the asset does not exist.
 export const FOOD_GALLERY:    readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.FOOD,    range(1, 12, [10]))
 export const OUTDOOR_GALLERY: readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.OUTDOOR, range(1, 14))
+
+// Landscape stills shown in their own section on the photography page (not mixed
+// into the category-filtered portrait grid).
+export const LANDSCAPE_GALLERY: readonly MEDIA_IMAGE[] = LANDSCAPE_IMAGES
 export const PRODUCT_GALLERY: readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.PRODUCT, range(1, 13))
 
 // Lookup so any consumer can resolve a category's gallery without a switch.
@@ -89,3 +131,6 @@ export const HERO_VIDEO: MEDIA_VIDEO = {
 }
 
 export const REELS_VIDEOS: readonly MEDIA_VIDEO[] = range(1, REELS_VIDEO_COUNT).map(buildVideo)
+
+// ── Films ──────────────────────────────────────────────────────────────────
+export const FILMS_MEDIA: readonly MEDIA_FILM[] = range(1, FILM_COUNT).map(buildFilm)

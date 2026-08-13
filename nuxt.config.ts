@@ -101,6 +101,15 @@ export default defineNuxtConfig({
         { rel: 'dns-prefetch', href: 'https://cdn.muhmdshiyas.com' },
         { rel: 'dns-prefetch', href: 'https://pub-280c846562404d5fb4b22563df800c7e.r2.dev' },
       ],
+      script: [
+        // Apply the saved theme before first paint so a light-theme visitor never
+        // sees a dark flash. Dark is the default, so no attribute is set for it.
+        {
+          innerHTML:
+            "try{if(localStorage.getItem('fbs-theme')==='light'){document.documentElement.dataset.theme='light'}}catch(e){}",
+          tagPosition: 'head',
+        },
+      ],
     },
     pageTransition: false,
     layoutTransition: false,

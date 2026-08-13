@@ -21,3 +21,11 @@ export interface MEDIA_VIDEO {
   readonly poster?: string
   readonly tags?: readonly string[]
 }
+
+export interface MEDIA_FILM {
+  readonly id: string
+  readonly videoUrl: string
+  readonly poster?: string
+  readonly width: number
+  readonly height: number
+}

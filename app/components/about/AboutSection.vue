@@ -25,9 +25,23 @@ const ctaRef       = ref<HTMLElement | null>(null)
 // Pre-baked AVIF sibling of the portrait — served to supporting browsers via <picture>.
 const portraitAvif = computed(() => toAvifSrc(ABOUT.PORTRAIT.src))
 
+// Skeleton shows until the portrait paints. `@error` also resolves it so a broken
+// src never leaves the skeleton spinning forever.
+const isImageLoaded = ref(false)
+function onImageSettled(): void {
+  isImageLoaded.value = true
+}
+
 onMounted(() => {
+  // A cached portrait can already be complete before @load can fire.
+  if (imageRef.value?.complete) isImageLoaded.value = true
+
   nextTick(() => {
-    clipReveal(imageWrapRef, { direction: 'right', duration: ANIMATION.DURATION.CINEMATIC })
+    clipReveal(imageWrapRef, {
+      direction: 'right',
+      duration:  ANIMATION.DURATION.DEFAULT,
+      ease:      ANIMATION.EASE.EXPO_OUT,
+    })
     if (imageRef.value) parallax(imageRef, { strength: 0.08 })
 
     fadeUp([eyebrowRef.value], {})
@@ -51,12 +65,15 @@ onMounted(() => {
     <div class="grid grid-cols-1 md:grid-cols-[55%_1fr]">
 
       <!-- ── Left: Portrait image ─────────────────────────────────────── -->
-      <!-- Portrait aspect on mobile; on desktop it matches the content column's
-           height (md:h-full) instead of forcing a 2/3 ratio taller than the
-           viewport. object-cover keeps the crop clean at any height. -->
+      <!-- Full-bleed on mobile. On desktop the cell is inset (vertical + left/right
+           padding) so the portrait sits inside the section and lines up with the
+           text column instead of bleeding to the top-left edges. -->
+      <div class="md:py-14 md:pl-10 md:pr-6">
+      <!-- Portrait aspect on mobile; on desktop it matches the inset cell height
+           (md:h-full). object-cover keeps the crop clean at any height. -->
       <div
         ref="imageWrapRef"
-        class="relative aspect-[3/4] overflow-hidden md:aspect-auto md:h-full md:min-h-[600px]"
+        class="relative aspect-[3/4] overflow-hidden md:aspect-auto md:h-full md:min-h-[540px] md:rounded-xl"
       >
         <!-- display:contents so <img> stays the parallax target and fills the wrapper -->
         <picture class="contents">
@@ -68,10 +85,20 @@ onMounted(() => {
             :width="ABOUT.PORTRAIT.width"
             :height="ABOUT.PORTRAIT.height"
             class="h-full w-full scale-[1.08] object-cover object-top"
-            loading="lazy"
+            loading="eager"
+            fetchpriority="low"
             decoding="async"
+            @load="onImageSettled"
+            @error="onImageSettled"
           />
         </picture>
+
+        <!-- Skeleton — themed shimmer while the portrait loads; fades out on paint -->
+        <div
+          class="skeleton pointer-events-none absolute inset-0 z-10 transition-opacity duration-700 motion-reduce:transition-none"
+          :class="isImageLoaded ? 'opacity-0' : 'opacity-100'"
+          aria-hidden="true"
+        />
 
         <!-- Cinematic top & bottom fades — blend the portrait into the void -->
         <div
@@ -90,6 +117,7 @@ onMounted(() => {
         >
           {{ ABOUT.LOCATION }}
         </p>
+      </div>
       </div>
 
       <!-- ── Right: Content ──────────────────────────────────────────── -->
@@ -173,3 +201,35 @@ onMounted(() => {
 
   </section>
 </template>
+
+<style scoped>
+/* Skeleton shimmer — a faint highlight sweeps across the elevated-surface tone,
+   staying within the project's dark palette. */
+.skeleton {
+  background:
+    linear-gradient(
+      100deg,
+      var(--color-surface) 30%,
+      var(--color-surface-elevated) 50%,
+      var(--color-surface) 70%
+    );
+  background-size: 220% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 160% 0;
+  }
+  100% {
+    background-position: -60% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--color-surface);
+  }
+}
+</style>

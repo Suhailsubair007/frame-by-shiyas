@@ -2,7 +2,15 @@
 import { gsap }          from 'gsap'
 import { useReveal }     from '@/composables/useReveal'
 import { ANIMATION }     from '@shared/constants/ANIMATION'
-import { REELS }         from '@shared/constants/REELS'
+import { ROUTES }        from '@shared/constants/ROUTES'
+import { FEATURED_REELS } from '@shared/constants/REELS'
+import type { REEL }     from '@shared/types/Reel'
+
+const props = withDefaults(defineProps<{
+  reels?: readonly REEL[]
+}>(), {
+  reels: () => FEATURED_REELS,
+})
 
 const { fadeUp, clipReveal } = useReveal()
 
@@ -44,9 +52,9 @@ const SLOT: Record<number, { xMult: number; scale: number; dim: number; zIndex: 
 
 function getSlot(cardIdx: number): number {
   const diff = cardIdx - activeIndex.value
-  const half = REELS.length / 2
-  if (diff >  half) return diff - REELS.length
-  if (diff < -half) return diff + REELS.length
+  const half = props.reels.length / 2
+  if (diff >  half) return diff - props.reels.length
+  if (diff < -half) return diff + props.reels.length
   return diff
 }
 
@@ -104,7 +112,7 @@ function placeCards(animate: boolean): void {
 }
 
 function advance(): void {
-  activeIndex.value = (activeIndex.value + 1) % REELS.length
+  activeIndex.value = (activeIndex.value + 1) % props.reels.length
 }
 
 function goTo(index: number): void {
@@ -130,10 +138,10 @@ function onTouchEnd(e: TouchEvent): void {
   if (Math.abs(deltaX) >= SWIPE_THRESHOLD && Math.abs(deltaX) >= Math.abs(deltaY)) {
     if (deltaX < 0) {
       // Swipe left → next reel
-      activeIndex.value = (activeIndex.value + 1) % REELS.length
+      activeIndex.value = (activeIndex.value + 1) % props.reels.length
     } else {
       // Swipe right → previous reel
-      activeIndex.value = (activeIndex.value - 1 + REELS.length) % REELS.length
+      activeIndex.value = (activeIndex.value - 1 + props.reels.length) % props.reels.length
     }
   }
 
@@ -196,7 +204,7 @@ onUnmounted(() => {
         ref="eyebrowRef"
         class="mb-4 font-mono text-[9px] uppercase tracking-[0.3em] text-text-faint opacity-0"
       >
-        01 — Reels
+        02 — Reels
       </p>
       <h2
         ref="headingRef"
@@ -218,7 +226,7 @@ onUnmounted(() => {
       style="height: clamp(480px, 78vh, 820px);"
     >
       <div
-        v-for="(reel, i) in REELS"
+        v-for="(reel, i) in props.reels"
         :key="reel.id"
         :ref="(el) => { cardRefs[i] = el as HTMLElement | null }"
         class="absolute left-1/2 top-0 cursor-pointer"
@@ -237,16 +245,23 @@ onUnmounted(() => {
     <!-- Progress indicators -->
     <div class="mt-10 flex items-center justify-center gap-2.5" aria-label="Reel navigation">
       <button
-        v-for="(_, i) in REELS"
+        v-for="(_, i) in props.reels"
         :key="i"
         class="h-px rounded-full transition-all duration-500 motion-reduce:transition-none"
         :class="i === activeIndex
           ? 'w-8 bg-text'
           : 'w-3 bg-border hover:bg-text-muted'"
-        :aria-label="`Reel ${i + 1} of ${REELS.length}`"
+        :aria-label="`Reel ${i + 1} of ${props.reels.length}`"
         :aria-pressed="i === activeIndex"
         @click="goTo(i)"
       />
+    </div>
+
+    <!-- View all — the carousel previews a curated few; the archive holds them all -->
+    <div class="mt-12 flex justify-center">
+      <BaseButton :href="ROUTES.FILMS" variant="text">
+        View all films &amp; reels
+      </BaseButton>
     </div>
   </section>
 </template>

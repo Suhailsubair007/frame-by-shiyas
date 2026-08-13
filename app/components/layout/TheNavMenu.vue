@@ -8,6 +8,7 @@ import { useReducedMotion } from '@/composables/useReducedMotion'
 import { NAVIGATION, META } from '@shared/constants/META'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
 import { LAYOUT }           from '@shared/constants/LAYOUT'
+import { ROUTES }           from '@shared/constants/ROUTES'
 
 const { isOpen, close }       = useMenuState()
 const { setState, reset }     = useCursorState()
@@ -91,8 +92,14 @@ function setLinkRef(el: Element | ComponentPublicInstance | null, index: number)
 
 // Close the overlay and smooth-scroll to the target section. `force` lets Lenis
 // scroll while it is still stopped from the open menu; closing restarts it after.
+// Section anchors only exist on the home page, so from a sub-page (e.g. /films)
+// route home with the hash and let the landing page scroll to it.
 function onNavClick(hash: string): void {
   close()
+  if (route.path !== ROUTES.HOME) {
+    navigateTo({ path: ROUTES.HOME, hash })
+    return
+  }
   scrollTo(hash, { offset: -LAYOUT.HEADER_OFFSET, force: true })
 }
 </script>

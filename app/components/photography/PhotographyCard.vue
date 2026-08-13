@@ -4,6 +4,7 @@ import { useReveal }              from '@/composables/useReveal'
 import { useMediaQuery }          from '@/composables/useMediaQuery'
 import type { PROJECT_LIST_ITEM } from '@shared/types/Project'
 import { CURSOR_STATE }           from '@shared/enums/CursorState'
+import { ANIMATION }              from '@shared/constants/ANIMATION'
 
 const props = defineProps<{
   project: PROJECT_LIST_ITEM
@@ -26,7 +27,13 @@ function handleCardClick(): void {
 onMounted(() => {
   nextTick(() => {
     if (!wrapRef.value) return
-    clipReveal(wrapRef, { direction: 'up' })
+    // Snappy reveal — a short duration with a fast-start ease so cards drop in
+    // crisply as they scroll into view rather than the slow cinematic default.
+    clipReveal(wrapRef, {
+      direction: 'up',
+      duration:  ANIMATION.DURATION.DEFAULT,
+      ease:      ANIMATION.EASE.EXPO_OUT,
+    })
   })
 })
 </script>
@@ -35,7 +42,7 @@ onMounted(() => {
   <div
     ref="wrapRef"
     class="relative overflow-hidden rounded-sm bg-surface/5"
-    :class="project.isLandscape ? 'aspect-video' : 'aspect-[3/4]'"
+    :class="project.isLandscape ? 'aspect-[3/2]' : 'aspect-[3/4]'"
   >
     <div
       class="group absolute inset-0 block"
