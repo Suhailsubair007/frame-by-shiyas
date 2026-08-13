@@ -4,6 +4,7 @@ import { CURSOR_STATE }     from '@shared/enums/CursorState'
 import { useCursorState }   from '@/composables/useCursorState'
 import { useLenis }         from '@/composables/useLenis'
 import { useReducedMotion } from '@/composables/useReducedMotion'
+import { useTheme }         from '@/composables/useTheme'
 import { ANIMATION }        from '@shared/constants/ANIMATION'
 import { CONTACT }          from '@shared/constants/CONTACT'
 import { LAYOUT }           from '@shared/constants/LAYOUT'
@@ -18,6 +19,7 @@ interface DOCK_ACTION {
 
 const { setState, reset }   = useCursorState()
 const { scrollTo }          = useLenis()
+const { theme, toggle: toggleTheme } = useTheme()
 const prefersReducedMotion  = useReducedMotion()
 
 const isOpen   = ref(false)
@@ -186,6 +188,47 @@ onBeforeUnmount(() => {
             </svg>
           </span>
         </a>
+      </li>
+
+      <!-- Theme toggle — lives in the fan; toggles instead of navigating, and
+           leaves the dock open so the switch is visible. -->
+      <li :ref="el => setItemRef(el, actions.length)" class="opacity-0">
+        <button
+          type="button"
+          :tabindex="isOpen ? 0 : -1"
+          :aria-hidden="!isOpen"
+          :aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+          class="group flex items-center justify-end gap-3"
+          @click="toggleTheme"
+          @mouseenter="setState(CURSOR_STATE.HOVER)"
+          @mouseleave="reset"
+        >
+          <span
+            class="rounded-full border border-border bg-surface-elevated/90 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted backdrop-blur transition-colors duration-300 group-hover:text-text"
+          >
+            {{ theme === 'dark' ? 'Light' : 'Dark' }}
+          </span>
+          <span
+            class="flex h-12 w-12 items-center justify-center rounded-full border border-border-strong bg-surface-elevated/90 text-text backdrop-blur transition-colors duration-300 group-hover:border-accent group-hover:text-accent"
+          >
+            <svg
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path v-if="theme === 'dark'" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              <template v-else>
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+              </template>
+            </svg>
+          </span>
+        </button>
       </li>
     </ul>
 

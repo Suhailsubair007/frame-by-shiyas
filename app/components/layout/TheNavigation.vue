@@ -55,10 +55,7 @@ onMounted(() => {
 
     <div class="relative flex items-center justify-between px-6 py-5 md:px-10 md:py-6">
       <TheNavLogo ref="logoRef" />
-      <div class="flex items-center gap-5">
-        <TheThemeToggle />
-        <TheNavToggle v-if="!isArchive" ref="toggleRef" />
-      </div>
+      <TheNavToggle v-if="!isArchive" ref="toggleRef" />
     </div>
 
     <!-- Full-screen menu overlay — mounted once, animated in/out -->
