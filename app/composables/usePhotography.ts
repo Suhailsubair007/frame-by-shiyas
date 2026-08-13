@@ -1,9 +1,10 @@
-import { PHOTOGRAPHY, PHOTOGRAPHY_ALL } from '@shared/constants/PHOTOGRAPHY'
+import { PHOTOGRAPHY, PHOTOGRAPHY_ALL, LANDSCAPE_PHOTOGRAPHY } from '@shared/constants/PHOTOGRAPHY'
 import type { PROJECT_LIST_ITEM } from '@shared/types/Project'
 import type { GALLERY_CATEGORY } from '@shared/enums/GalleryCategory'
 
 export function usePhotography() {
   const projects: readonly PROJECT_LIST_ITEM[] = PHOTOGRAPHY
+  const landscape: readonly PROJECT_LIST_ITEM[] = LANDSCAPE_PHOTOGRAPHY
 
   // "All" shows categories mixed together; a specific tab keeps its own order.
   function filterByCategory(category: GALLERY_CATEGORY | null): readonly PROJECT_LIST_ITEM[] {
@@ -11,5 +12,5 @@ export function usePhotography() {
     return PHOTOGRAPHY.filter(p => p.category === category)
   }
 
-  return { projects, filterByCategory } as const
+  return { projects, landscape, filterByCategory } as const
 }

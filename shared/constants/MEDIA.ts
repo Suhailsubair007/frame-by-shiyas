@@ -58,6 +58,30 @@ function buildImageGallery(
   return frames.map(frame => buildImage(category, frame))
 }
 
+// Landscape stills (LI-001…LI-011) added to the photography grid. Their true 3:2
+// dimensions are kept so <img> reserves the right box; the grid's portrait cards
+// centre-crop them via object-cover.
+const LANDSCAPE_IMAGE_COUNT  = 11
+const LANDSCAPE_IMAGE_WIDTH  = 1600
+const LANDSCAPE_IMAGE_HEIGHT = 1067
+
+function buildLandscapeImage(index: number): MEDIA_IMAGE {
+  const frame = String(index).padStart(3, '0')
+  return {
+    id:       `landscape-${index}`,
+    url:      `${IMAGE_BASE}/landscape/LI-${frame}.webp`,
+    title:    `Landscape ${index}`,
+    alt:      `Landscape photography by Muhammed Shiyas — Sharjah, UAE`,
+    category: GALLERY_CATEGORY.OUTDOOR,
+    width:    LANDSCAPE_IMAGE_WIDTH,
+    height:   LANDSCAPE_IMAGE_HEIGHT,
+    tags:     ['landscape'],
+  }
+}
+
+const LANDSCAPE_IMAGES: readonly MEDIA_IMAGE[] =
+  range(1, LANDSCAPE_IMAGE_COUNT).map(buildLandscapeImage)
+
 function buildVideo(index: number): MEDIA_VIDEO {
   return {
     id:    `v${index}`,
@@ -79,6 +103,10 @@ function buildFilm(index: number): MEDIA_FILM {
 // P10 is intentionally absent from the Food set — the asset does not exist.
 export const FOOD_GALLERY:    readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.FOOD,    range(1, 12, [10]))
 export const OUTDOOR_GALLERY: readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.OUTDOOR, range(1, 14))
+
+// Landscape stills shown in their own section on the photography page (not mixed
+// into the category-filtered portrait grid).
+export const LANDSCAPE_GALLERY: readonly MEDIA_IMAGE[] = LANDSCAPE_IMAGES
 export const PRODUCT_GALLERY: readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.PRODUCT, range(1, 13))
 
 // Lookup so any consumer can resolve a category's gallery without a switch.

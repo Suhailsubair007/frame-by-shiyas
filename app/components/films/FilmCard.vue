@@ -15,48 +15,41 @@ const prefersReducedMotion = useReducedMotion()
 
 const videoRef = ref<HTMLVideoElement | null>(null)
 
-// Clips open on a stronger frame a few seconds in, so playback both starts and
-// loops from here rather than the native loop's fixed 0s restart.
-const LOOP_START_SECONDS = 3
-
 const indexLabel = computed(() => String(props.index + 1).padStart(2, '0'))
-const canAutoplay = computed(() => props.shouldLoad === true && !prefersReducedMotion.value)
 
 // Crops letterbox bars baked into the source clip; no-op when zoom is absent.
 const videoStyle = computed(() =>
   props.film.zoom ? { transform: `scale(${props.film.zoom})` } : undefined,
 )
 
-function seekToLoopStart(): void {
-  const el = videoRef.value
-  if (!el) return
-  // Clamp for clips shorter than the offset so the seek never fails.
-  el.currentTime = el.duration > LOOP_START_SECONDS ? LOOP_START_SECONDS : 0
+// Until real thumbnails are supplied, park the idle clip on a frame near the
+// middle so the card shows a representative still instead of a black/first frame.
+function seekToPreviewFrame(): void {
+  const video = videoRef.value
+  if (!video || !Number.isFinite(video.duration) || video.duration === 0) return
+  video.currentTime = video.duration / 2
 }
 
 function onLoadedMetadata(): void {
-  seekToLoopStart()
+  // A real thumbnail poster, once supplied, is the idle image — don't override it.
+  if (props.film.poster) return
+  seekToPreviewFrame()
 }
 
-function onEnded(): void {
-  seekToLoopStart()
-  if (canAutoplay.value) videoRef.value?.play().catch(() => {})
-}
-
-// Safari occasionally ignores the autoplay attribute when the src is bound after
-// mount; nudging play() once the clip is loadable covers that case.
-watch(canAutoplay, autoplay => {
-  if (!autoplay) return
-  seekToLoopStart()
-  videoRef.value?.play().catch(() => {})
-})
-
+// Play only while hovered — no infinite autoplay. Reduced-motion users keep the
+// still and the play cursor, but the clip stays paused.
 function onEnter(): void {
   setState(CURSOR_STATE.PLAY)
+  if (prefersReducedMotion.value) return
+  videoRef.value?.play().catch(() => {})
 }
 
 function onLeave(): void {
   reset()
+  const video = videoRef.value
+  if (!video) return
+  video.pause()
+  seekToPreviewFrame()
 }
 </script>
 
@@ -68,7 +61,7 @@ function onLeave(): void {
     @mouseenter="onEnter"
     @mouseleave="onLeave"
   >
-    <!-- Landscape clip — autoplays muted once the rail nears the viewport -->
+    <!-- Landscape clip — parked on a mid-point still; plays on hover, pauses on leave -->
     <video
       v-if="shouldLoad"
       ref="videoRef"
@@ -76,13 +69,12 @@ function onLeave(): void {
       :poster="film.poster"
       :style="videoStyle"
       class="absolute inset-0 h-full w-full object-cover"
-      :autoplay="canAutoplay"
       muted
+      loop
       playsinline
       preload="metadata"
       aria-hidden="true"
       @loadedmetadata="onLoadedMetadata"
-      @ended="onEnded"
     />
 
     <!-- Gradient veil for text legibility — deepens on hover -->

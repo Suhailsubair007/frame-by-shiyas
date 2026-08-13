@@ -51,6 +51,27 @@
   --z-prompt:     400;
 }
 
+/* ─── Light theme ────────────────────────────────────────────────────────────
+   Opt-in via data-theme="light" on <html>; dark (the default above) needs no
+   attribute. Overriding the same tokens flips the whole palette because every
+   utility resolves through var(--color-*).
+   ─────────────────────────────────────────────────────────────────────────── */
+:root[data-theme='light'] {
+  --color-void:             oklch(97% 0 0);
+  --color-surface:          oklch(93% 0 0);
+  --color-surface-elevated: oklch(88% 0 0);
+
+  --color-border:           oklch(0% 0 0 / 0.12);
+  --color-border-strong:    oklch(0% 0 0 / 0.24);
+
+  --color-text:             oklch(20% 0 0 / 0.92);
+  --color-text-muted:       oklch(20% 0 0 / 0.55);
+  --color-text-faint:       oklch(20% 0 0 / 0.35);
+
+  --color-accent:           oklch(52% 0.10 70);
+  --color-accent-muted:     oklch(52% 0.10 70 / 0.12);
+}
+
 /* ─── Base Layer ─────────────────────────────────────────────────────────────
    Opinionated resets and global element styles
    ─────────────────────────────────────────────────────────────────────────── */
@@ -78,6 +99,8 @@
     line-height: 1.65;
     overflow-x: hidden;
     min-height: 100dvh;
+    /* Smooth the palette flip when the theme is toggled */
+    transition: background-color 0.5s var(--ease-smooth), color 0.5s var(--ease-smooth);
   }
 
   /* Display typography — the editorial voice */

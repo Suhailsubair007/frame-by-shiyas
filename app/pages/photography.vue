@@ -5,7 +5,7 @@ import type { GALLERY_CATEGORY } from '@shared/enums/GalleryCategory'
 
 definePageMeta({ layout: 'default' })
 
-const { filterByCategory } = usePhotography()
+const { filterByCategory, landscape } = usePhotography()
 
 const activeCategory = ref<GALLERY_CATEGORY | null>(null)
 const projects = computed(() => filterByCategory(activeCategory.value))
@@ -29,7 +29,7 @@ useSeoMeta({
     />
 
     <!-- Category filter -->
-    <div class="mt-12 px-6 md:mt-16 md:px-10">
+    <div class="mt-8 px-6 md:mt-10 md:px-10">
       <PhotographyFilter
         :active="activeCategory"
         @change="onFilterChange"
@@ -45,5 +45,19 @@ useSeoMeta({
         :class="i % 2 === 1 ? 'md:mt-20' : ''"
       />
     </div>
+
+    <!-- Landscape — a separate section of wide-format frames -->
+    <section v-if="landscape.length" class="mt-24 px-6 md:mt-32 md:px-10">
+      <p class="mb-6 border-t border-border pt-10 font-mono text-[9px] uppercase tracking-[0.3em] text-text-faint">
+        Landscape
+      </p>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+        <PhotographyCard
+          v-for="project in landscape"
+          :key="project.id"
+          :project="project"
+        />
+      </div>
+    </section>
   </main>
 </template>

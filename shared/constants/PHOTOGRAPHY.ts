@@ -1,6 +1,6 @@
 import type { PROJECT_LIST_ITEM, GALLERY_IMAGE } from '@shared/types/Project'
 import type { MEDIA_IMAGE }                       from '@shared/types/Media'
-import { ALL_IMAGES, FOOD_GALLERY, OUTDOOR_GALLERY, PRODUCT_GALLERY } from '@shared/constants/MEDIA'
+import { ALL_IMAGES, FOOD_GALLERY, OUTDOOR_GALLERY, PRODUCT_GALLERY, LANDSCAPE_GALLERY } from '@shared/constants/MEDIA'
 import { interleave }                             from '@shared/utils/interleave'
 
 // The photography grid is a projection of the centralised image galleries — no
@@ -27,6 +27,14 @@ function toProject(image: MEDIA_IMAGE): PROJECT_LIST_ITEM {
 }
 
 export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = ALL_IMAGES.map(toProject)
+
+// Landscape stills rendered as wide cards in their own section on the photography page.
+function toLandscapeProject(image: MEDIA_IMAGE): PROJECT_LIST_ITEM {
+  return { ...toProject(image), isLandscape: true }
+}
+
+export const LANDSCAPE_PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] =
+  LANDSCAPE_GALLERY.map(toLandscapeProject)
 
 // The "All" tab round-robins the categories — one Food, one Outdoor, one
 // Product, then repeat — so the grid alternates instead of showing each

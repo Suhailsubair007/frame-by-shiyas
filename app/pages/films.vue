@@ -30,7 +30,7 @@ useSeoMeta({
     />
 
     <!-- Type filter -->
-    <div class="mt-12 px-6 md:mt-16 md:px-10">
+    <div class="mt-8 px-6 md:mt-10 md:px-10">
       <VideoFilter
         :active="activeTab"
         @change="onTabChange"
