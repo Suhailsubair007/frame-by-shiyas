@@ -61,7 +61,7 @@ onMounted(() => {
         <h2
           ref="headingRef"
           class="mb-8 pb-6 font-display font-normal leading-[0.88] text-text"
-          style="font-size: clamp(52px, 9vw, 144px);"
+          style="font-size: clamp(42px, 7vw, 112px);"
         >
           {{ CONTACT.HEADING_TOP }}<br />
           <em>{{ CONTACT.HEADING_FOOT }}</em>

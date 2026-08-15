@@ -209,7 +209,7 @@ onUnmounted(() => {
       <h2
         ref="headingRef"
         class="font-display font-normal leading-[0.88] text-text"
-        style="font-size: clamp(40px, 6vw, 100px);"
+        style="font-size: clamp(32px, 4.8vw, 80px);"
       >
         Short<br /><em>Reels.</em>
       </h2>
@@ -259,7 +259,7 @@ onUnmounted(() => {
 
     <!-- View all — the carousel previews a curated few; the archive holds them all -->
     <div class="mt-12 flex justify-center">
-      <BaseButton :href="ROUTES.FILMS" variant="text">
+      <BaseButton :href="ROUTES.FILMS" variant="default" class="rounded-[28px]">
         View all films &amp; reels
       </BaseButton>
     </div>

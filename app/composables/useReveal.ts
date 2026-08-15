@@ -15,6 +15,10 @@ interface REVEAL_OPTIONS {
   triggerStart?: string
   once?:         boolean
   scrub?:        boolean | number
+  // Play the tween immediately on call instead of binding it to a ScrollTrigger.
+  // Used for elements injected after load (e.g. "Load more") that must animate in
+  // on click rather than waiting to scroll into view.
+  immediate?:    boolean
 }
 
 interface PARALLAX_OPTIONS {
@@ -43,6 +47,7 @@ export function useReveal() {
       stagger      = ANIMATION.STAGGER.LOOSE,
       triggerStart = ANIMATION.SCROLL.START,
       once         = true,
+      immediate    = false,
     } = options
 
     const elements = Array.isArray(target)
@@ -73,15 +78,18 @@ export function useReveal() {
           ease,
           delay,
           // Promote to compositor layer only for the duration of the animation.
-          // Set just before the tween plays (onEnter) and released after (onComplete)
-          // to avoid holding GPU memory for every clip-path element simultaneously.
+          // Set just before the tween plays (onStart/onEnter) and released after
+          // (onComplete) to avoid holding GPU memory for every clip-path element.
+          onStart() { el.style.willChange = 'clip-path' },
           onComplete() { el.style.willChange = 'auto' },
-          scrollTrigger: {
-            trigger: el,
-            start:   triggerStart,
-            once,
-            onEnter() { el.style.willChange = 'clip-path' },
-          },
+          scrollTrigger: immediate
+            ? undefined
+            : {
+                trigger: el,
+                start:   triggerStart,
+                once,
+                onEnter() { el.style.willChange = 'clip-path' },
+              },
         },
       )
     })

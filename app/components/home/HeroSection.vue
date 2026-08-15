@@ -263,7 +263,7 @@ onUnmounted(() => {
         class="mt-4 font-display font-normal italic leading-[0.87] text-text md:mt-5"
         style="font-size: clamp(46px, 6.5vw, 112px);"
       >
-        Craft the<br />Unrepeatable.
+        Moments,<br />Made Cinematic.
       </h1>
     </div>
 

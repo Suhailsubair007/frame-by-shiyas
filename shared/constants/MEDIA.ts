@@ -23,9 +23,11 @@ const FILM_IMAGE_WIDTH  = 1920
 const FILM_IMAGE_HEIGHT = 1080
 
 const CATEGORY_LABEL: Readonly<Record<GALLERY_CATEGORY, string>> = {
-  [GALLERY_CATEGORY.FOOD]:    'Food',
-  [GALLERY_CATEGORY.OUTDOOR]: 'Portraits',
-  [GALLERY_CATEGORY.PRODUCT]: 'Product',
+  [GALLERY_CATEGORY.FOOD]:      'Food',
+  [GALLERY_CATEGORY.OUTDOOR]:   'Portraits',
+  [GALLERY_CATEGORY.PRODUCT]:   'Product',
+  [GALLERY_CATEGORY.LANDSCAPE]: 'Real Estate',
+  [GALLERY_CATEGORY.OTHERS]:    'Others',
 }
 
 // Inclusive integer range with optional exclusions (e.g. Food skips the missing P10).
@@ -58,29 +60,56 @@ function buildImageGallery(
   return frames.map(frame => buildImage(category, frame))
 }
 
-// Landscape stills (LI-001…LI-011) added to the photography grid. Their true 3:2
-// dimensions are kept so <img> reserves the right box; the grid's portrait cards
-// centre-crop them via object-cover.
-const LANDSCAPE_IMAGE_COUNT  = 11
-const LANDSCAPE_IMAGE_WIDTH  = 1600
-const LANDSCAPE_IMAGE_HEIGHT = 1067
+// Mixed-orientation stills (LS-1…LS-11): some landscape (3:2), some portrait (2:3).
+// True per-frame dimensions are kept so each card reserves the right box and the
+// masonry grid lays out wide and tall frames together without cropping.
+const LANDSCAPE_IMAGE_COUNT = 11
+const LANDSCAPE_LONG_EDGE   = 1600
+const LANDSCAPE_SHORT_EDGE  = 1067
+
+// LS-n frames shot in portrait; every other frame is landscape.
+const LANDSCAPE_PORTRAIT_FRAMES: readonly number[] = [7, 8, 9, 11]
 
 function buildLandscapeImage(index: number): MEDIA_IMAGE {
-  const frame = String(index).padStart(3, '0')
+  const isPortrait = LANDSCAPE_PORTRAIT_FRAMES.includes(index)
   return {
     id:       `landscape-${index}`,
-    url:      `${IMAGE_BASE}/landscape/LI-${frame}.webp`,
-    title:    `Landscape ${index}`,
-    alt:      `Landscape photography by Muhammed Shiyas — Sharjah, UAE`,
-    category: GALLERY_CATEGORY.OUTDOOR,
-    width:    LANDSCAPE_IMAGE_WIDTH,
-    height:   LANDSCAPE_IMAGE_HEIGHT,
+    url:      `${IMAGE_BASE}/new-landscape/LS-${index}.webp`,
+    title:    `Real Estate ${index}`,
+    alt:      `Real estate photography by Muhammed Shiyas — Sharjah, UAE`,
+    category: GALLERY_CATEGORY.LANDSCAPE,
+    width:    isPortrait ? LANDSCAPE_SHORT_EDGE : LANDSCAPE_LONG_EDGE,
+    height:   isPortrait ? LANDSCAPE_LONG_EDGE  : LANDSCAPE_SHORT_EDGE,
     tags:     ['landscape'],
   }
 }
 
 const LANDSCAPE_IMAGES: readonly MEDIA_IMAGE[] =
   range(1, LANDSCAPE_IMAGE_COUNT).map(buildLandscapeImage)
+
+// "Others" tab — LS-12…LS-18 from the same pool. Mixed-orientation (masonry) too;
+// LS-15 is an extra-wide crop, so its height differs from the standard 3:2 frames.
+const OTHERS_FRAME_START  = 12
+const OTHERS_FRAME_END    = 18
+const OTHERS_IMAGE_WIDTH  = 1600
+const OTHERS_IMAGE_HEIGHT = 1067
+const OTHERS_WIDE_FRAMES: Readonly<Record<number, number>> = { 15: 838 }
+
+function buildOthersImage(frame: number, position: number): MEDIA_IMAGE {
+  return {
+    id:       `others-${frame}`,
+    url:      `${IMAGE_BASE}/new-landscape/LS-${frame}.webp`,
+    title:    `Frame ${position}`,
+    alt:      `Photography by Muhammed Shiyas — Sharjah, UAE`,
+    category: GALLERY_CATEGORY.OTHERS,
+    width:    OTHERS_IMAGE_WIDTH,
+    height:   OTHERS_WIDE_FRAMES[frame] ?? OTHERS_IMAGE_HEIGHT,
+    tags:     ['others'],
+  }
+}
+
+const OTHERS_IMAGES: readonly MEDIA_IMAGE[] =
+  range(OTHERS_FRAME_START, OTHERS_FRAME_END).map((frame, i) => buildOthersImage(frame, i + 1))
 
 function buildVideo(index: number): MEDIA_VIDEO {
   return {
@@ -104,23 +133,29 @@ function buildFilm(index: number): MEDIA_FILM {
 export const FOOD_GALLERY:    readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.FOOD,    range(1, 12, [10]))
 export const OUTDOOR_GALLERY: readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.OUTDOOR, range(1, 14))
 
-// Landscape stills shown in their own section on the photography page (not mixed
-// into the category-filtered portrait grid).
+// Landscape stills surfaced under the "Real Estate" photography filter tab.
 export const LANDSCAPE_GALLERY: readonly MEDIA_IMAGE[] = LANDSCAPE_IMAGES
 export const PRODUCT_GALLERY: readonly MEDIA_IMAGE[] = buildImageGallery(GALLERY_CATEGORY.PRODUCT, range(1, 13))
 
+// Stills surfaced under the "Others" photography filter tab.
+export const OTHERS_GALLERY: readonly MEDIA_IMAGE[] = OTHERS_IMAGES
+
 // Lookup so any consumer can resolve a category's gallery without a switch.
 export const IMAGE_GALLERIES: Readonly<Record<GALLERY_CATEGORY, readonly MEDIA_IMAGE[]>> = {
-  [GALLERY_CATEGORY.FOOD]:    FOOD_GALLERY,
-  [GALLERY_CATEGORY.OUTDOOR]: OUTDOOR_GALLERY,
-  [GALLERY_CATEGORY.PRODUCT]: PRODUCT_GALLERY,
+  [GALLERY_CATEGORY.FOOD]:      FOOD_GALLERY,
+  [GALLERY_CATEGORY.OUTDOOR]:   OUTDOOR_GALLERY,
+  [GALLERY_CATEGORY.PRODUCT]:   PRODUCT_GALLERY,
+  [GALLERY_CATEGORY.LANDSCAPE]: LANDSCAPE_GALLERY,
+  [GALLERY_CATEGORY.OTHERS]:    OTHERS_GALLERY,
 }
 
-// Flat list across every category — used by the "All" gallery filter.
+// Flat list across every category — the source for the full photography grid.
 export const ALL_IMAGES: readonly MEDIA_IMAGE[] = [
   ...FOOD_GALLERY,
   ...OUTDOOR_GALLERY,
   ...PRODUCT_GALLERY,
+  ...LANDSCAPE_GALLERY,
+  ...OTHERS_GALLERY,
 ]
 
 // ── Videos ───────────────────────────────────────────────────────────────────

@@ -82,12 +82,14 @@ onUnmounted(() => {
         >
           01 — Films
         </p>
+        <!-- pb/-mb pair gives the italic descenders (y, g, p) room inside the
+             clip-path reveal box without changing the layout spacing. -->
         <h2
           ref="headingRef"
-          class="font-display font-normal leading-[0.88] text-text"
-          style="font-size: clamp(44px, 6vw, 104px);"
+          class="font-display font-normal leading-[0.88] text-text pb-[0.2em] -mb-[0.2em]"
+          style="font-size: clamp(36px, 5vw, 84px);"
         >
-          Selected<br /><em>Films.</em>
+          Commercial<br /><em>Videography.</em>
         </h2>
       </div>
 

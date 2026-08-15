@@ -11,9 +11,7 @@ const route = useRoute()
 
 // Archive pages carry their own "← Home" control, so the menu toggle is dropped
 // there — no redundant top-right menu.
-const isArchive = computed(
-  () => route.path === ROUTES.PHOTOGRAPHY || route.path === ROUTES.FILMS,
-)
+const isArchive = computed(() => route.path === ROUTES.FILMS)
 
 const logoRef   = ref<InstanceType<typeof TheNavLogo> | null>(null)
 const toggleRef = ref<InstanceType<typeof TheNavToggle> | null>(null)

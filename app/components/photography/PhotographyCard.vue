@@ -6,9 +6,25 @@ import type { PROJECT_LIST_ITEM } from '@shared/types/Project'
 import { CURSOR_STATE }           from '@shared/enums/CursorState'
 import { ANIMATION }              from '@shared/constants/ANIMATION'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   project: PROJECT_LIST_ITEM
-}>()
+  // Reveal on mount (with revealDelay stagger) instead of on scroll — used for
+  // cards appended by "Load more" so they animate in on click.
+  immediate?: boolean
+  revealDelay?: number
+  // Render at the image's true aspect ratio rather than a fixed card shape — used
+  // by the mixed-orientation landscape masonry so frames aren't cropped.
+  naturalAspect?: boolean
+}>(), {
+  immediate: false,
+  revealDelay: 0,
+  naturalAspect: false,
+})
+
+// Data-driven ratio can't be a static Tailwind class, so it's applied inline.
+const aspectRatioStyle = computed(() => ({
+  aspectRatio: `${props.project.coverImage.width} / ${props.project.coverImage.height}`,
+}))
 
 const { setState, reset } = useCursorState()
 const { clipReveal }      = useReveal()
@@ -33,6 +49,8 @@ onMounted(() => {
       direction: 'up',
       duration:  ANIMATION.DURATION.DEFAULT,
       ease:      ANIMATION.EASE.EXPO_OUT,
+      immediate: props.immediate,
+      delay:     props.revealDelay,
     })
   })
 })
@@ -42,7 +60,8 @@ onMounted(() => {
   <div
     ref="wrapRef"
     class="relative overflow-hidden rounded-sm bg-surface/5"
-    :class="project.isLandscape ? 'aspect-[3/2]' : 'aspect-[3/4]'"
+    :class="naturalAspect ? '' : (project.isLandscape ? 'aspect-[3/2]' : 'aspect-[3/4]')"
+    :style="naturalAspect ? aspectRatioStyle : undefined"
   >
     <div
       class="group absolute inset-0 block"
