@@ -6,7 +6,7 @@ import { useCursorState } from '@/composables/useCursorState'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 
-const { state, show, hide } = useCursorState()
+const { state, show, hide, focusTarget, clearFocus } = useCursorState()
 const { hasPointer }        = useMediaQuery()
 const prefersReducedMotion  = useReducedMotion()
 
@@ -18,6 +18,10 @@ const isActive = ref(false)
 // it creates an optimised tween that updates every frame without recreating.
 let xTo: ReturnType<typeof gsap.quickTo>
 let yTo: ReturnType<typeof gsap.quickTo>
+// Dot quickTo — only used in focus mode, where the dot must ease across the
+// screen too (pointer follow keeps setting it instantly for zero lag).
+let dotXTo: ReturnType<typeof gsap.quickTo>
+let dotYTo: ReturnType<typeof gsap.quickTo>
 
 // Idempotent and safe to re-attempt. hasPointer is a client-only media query, so
 // the v-if below only puts dotRef/ringRef in the DOM a beat after this first runs.
@@ -34,11 +38,13 @@ function initFollow(): boolean {
   // Position off-screen initially so there's no flash at (0,0).
   // Start ring at DEFAULT scale (0.3) so it's rasterised at its full 120 px
   // natural size from the first frame — all state transitions only scale down.
-  gsap.set([ring, dot], { x: -200, y: -200 })
-  gsap.set(ring, { scale: 0.3 })
+  gsap.set(ring, { x: -200, y: -200, scale: 0.3 })
+  gsap.set(dot, { x: -200, y: -200, xPercent: -50, yPercent: -50 })
 
   xTo = gsap.quickTo(ring, 'x', { duration: 0.55, ease: 'power3' })
   yTo = gsap.quickTo(ring, 'y', { duration: 0.55, ease: 'power3' })
+  dotXTo = gsap.quickTo(dot, 'x', { duration: 0.4, ease: 'power3' })
+  dotYTo = gsap.quickTo(dot, 'y', { duration: 0.4, ease: 'power3' })
 
   document.documentElement.classList.add('has-custom-cursor')
   hide()
@@ -92,6 +98,9 @@ function flushPointer(): void {
 useEventListener('mousemove', (e: MouseEvent) => {
   if (!hasPointer.value || prefersReducedMotion.value) return
 
+  // Real movement always wins: drop any programmatic focus so pointer follow resumes.
+  clearFocus()
+
   pointerX = e.clientX
   pointerY = e.clientY
 
@@ -99,8 +108,57 @@ useEventListener('mousemove', (e: MouseEvent) => {
   moveRafId = requestAnimationFrame(flushPointer)
 })
 
+// Programmatic focus — park the cursor on a video that just entered view, even
+// though the pointer hasn't moved, and keep it glued to that element's LIVE centre
+// every frame (the page may still be scrolling into place, so a one-off point goes
+// stale). Both dot and ring ease via quickTo. Released the instant the user moves.
+let focusRafId = 0
+
+function trackFocus(): void {
+  focusRafId = 0
+
+  const el = focusTarget.value
+  if (!el) return
+
+  if (!initFollow() || !dotRef.value) {
+    focusRafId = requestAnimationFrame(trackFocus)
+    return
+  }
+
+  const rect = el.getBoundingClientRect()
+  const cx = rect.left + rect.width / 2
+  const cy = rect.top + rect.height / 2
+
+  // Keep the internal pointer coords in sync so resuming follow doesn't jump.
+  pointerX = cx
+  pointerY = cy
+
+  dotXTo?.(cx)
+  dotYTo?.(cy)
+  xTo?.(cx)
+  yTo?.(cy)
+
+  if (!isActive.value) {
+    isActive.value = true
+    show()
+    gsap.to([dotRef.value, ringRef.value], { opacity: 1, duration: 0.4 })
+  }
+
+  focusRafId = requestAnimationFrame(trackFocus)
+}
+
+watch(focusTarget, (el) => {
+  if (el && !focusRafId) {
+    focusRafId = requestAnimationFrame(trackFocus)
+  } else if (!el && focusRafId) {
+    cancelAnimationFrame(focusRafId)
+    focusRafId = 0
+  }
+})
+
 onUnmounted(() => {
   if (moveRafId) cancelAnimationFrame(moveRafId)
+  if (focusRafId) cancelAnimationFrame(focusRafId)
   document.documentElement.classList.remove('has-custom-cursor')
 })
 

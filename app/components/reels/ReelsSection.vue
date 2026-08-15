@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { gsap }          from 'gsap'
-import { useReveal }     from '@/composables/useReveal'
-import { ANIMATION }     from '@shared/constants/ANIMATION'
-import { ROUTES }        from '@shared/constants/ROUTES'
-import { FEATURED_REELS } from '@shared/constants/REELS'
-import type { REEL }     from '@shared/types/Reel'
+import { gsap }              from 'gsap'
+import { useReveal }         from '@/composables/useReveal'
+import { ANIMATION }         from '@shared/constants/ANIMATION'
+import { ROUTES }            from '@shared/constants/ROUTES'
+import { FEATURED_REELS }    from '@shared/constants/REELS'
+import type { REEL }         from '@shared/types/Reel'
 
 const props = withDefaults(defineProps<{
   reels?: readonly REEL[]

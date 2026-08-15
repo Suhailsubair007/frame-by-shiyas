@@ -8,9 +8,6 @@
     <TheGrainOverlay />
     <TheCursor />
 
-    <!-- Navigation — fixed, above page content -->
-    <TheNavigation />
-
     <!-- Page content wrapped in cinematic route transition -->
     <ThePageTransition>
       <slot />

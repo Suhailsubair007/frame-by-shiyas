@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useHorizontalScroll } from '@/composables/useHorizontalScroll'
-import { useReveal }           from '@/composables/useReveal'
-import { ANIMATION }           from '@shared/constants/ANIMATION'
-import { FILMS }               from '@shared/constants/FILMS'
-import type { FILM }           from '@shared/types/Film'
+import { useHorizontalScroll }   from '@/composables/useHorizontalScroll'
+import { useReveal }             from '@/composables/useReveal'
+import { useCursorFocusInView }  from '@/composables/useCursorFocusInView'
+import { ANIMATION }             from '@shared/constants/ANIMATION'
+import { FILMS }                 from '@shared/constants/FILMS'
+import type { FILM }             from '@shared/types/Film'
 
 const { fadeUp, clipReveal } = useReveal()
 
@@ -26,6 +27,20 @@ const FILMS_PRELOAD_ROOT_MARGIN = '400px 0px'
 let nearObserver: IntersectionObserver | null = null
 
 useHorizontalScroll(pinRef, trackRef)
+
+// When the rail scrolls into view, park the custom cursor on the first clip and
+// autoplay it, so the active video is obvious even if the pointer is elsewhere.
+// It pauses again once the section scrolls away.
+const isFirstFilmActive = ref(false)
+
+useCursorFocusInView(
+  pinRef,
+  () => trackRef.value?.querySelector<HTMLElement>('[data-film-card]') ?? null,
+  {
+    onEngage:  () => { isFirstFilmActive.value = true },
+    onRelease: () => { isFirstFilmActive.value = false },
+  },
+)
 
 onMounted(() => {
   films.value = shuffle(FILMS)
@@ -112,6 +127,7 @@ onUnmounted(() => {
             :film="film"
             :index="i"
             :should-load="isNear"
+            :active="isFirstFilmActive && i === 0"
             style="scroll-snap-align: start;"
           />
         </div>
