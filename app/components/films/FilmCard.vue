@@ -77,54 +77,20 @@ function onLeave(): void {
       @loadedmetadata="onLoadedMetadata"
     />
 
-    <!-- Gradient veil for text legibility — deepens on hover -->
+    <!-- Bottom fade dissolves each clip into the section background. Built on the
+         themed --color-void token, so it's black in dark mode and white in light. -->
     <div
-      class="absolute inset-0 opacity-70 transition-opacity duration-500 group-hover:opacity-100"
-      style="background: linear-gradient(to bottom, transparent 25%, oklch(4% 0 0 / 0.55) 55%, oklch(4% 0 0 / 0.92) 100%);"
+      class="absolute inset-0"
+      style="background: linear-gradient(to top, var(--color-void), transparent 34%);"
       aria-hidden="true"
     />
 
-    <!-- Index — top left -->
+    <!-- Index — bottom left, sitting over the fade -->
     <span
-      class="absolute left-5 top-5 font-mono text-[10px] tracking-[0.25em] text-text-faint"
+      class="absolute bottom-5 left-5 font-mono text-[10px] tracking-[0.25em] text-text-faint"
       aria-hidden="true"
     >
       {{ indexLabel }}
     </span>
-
-    <!-- Category — top right -->
-    <span
-      class="absolute right-5 top-5 font-mono text-[9px] uppercase tracking-[0.2em] text-text-faint"
-      aria-hidden="true"
-    >
-      {{ film.category }}
-    </span>
-
-    <!-- Film info — bottom -->
-    <div class="absolute bottom-0 left-0 right-0 p-5 md:p-7">
-      <p
-        v-if="film.tagline"
-        class="mb-2 font-mono text-[9px] uppercase tracking-[0.2em] text-text-faint opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        aria-hidden="true"
-      >
-        {{ film.tagline }}
-      </p>
-
-      <h3
-        class="font-display font-normal italic leading-tight text-text transition-transform duration-500 ease-out group-hover:-translate-y-1"
-        style="font-size: clamp(22px, 3.2vw, 50px);"
-      >
-        {{ film.title }}
-      </h3>
-
-      <div class="mt-2 flex items-center gap-4">
-        <span class="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted">
-          {{ film.category }}
-        </span>
-        <span v-if="film.duration" class="font-mono text-[9px] tracking-widest text-text-faint">
-          {{ film.duration }}
-        </span>
-      </div>
-    </div>
   </div>
 </template>

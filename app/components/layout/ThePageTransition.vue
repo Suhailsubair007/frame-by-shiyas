@@ -12,8 +12,7 @@ const { previousPath } = useNavHistory()
 // Returning to the home page from a sub-page lands on the section whose "View all"
 // opened it, instead of snapping to the top. Fresh forward navigations go to top.
 const RETURN_ANCHOR: Readonly<Record<string, string>> = {
-  [ROUTES.FILMS]:       '#reels',
-  [ROUTES.PHOTOGRAPHY]: '#photography',
+  [ROUTES.FILMS]: '#reels',
 }
 
 function restoreScroll(): void {

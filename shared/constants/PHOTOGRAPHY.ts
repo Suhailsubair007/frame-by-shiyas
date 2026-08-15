@@ -1,6 +1,6 @@
 import type { PROJECT_LIST_ITEM, GALLERY_IMAGE } from '@shared/types/Project'
 import type { MEDIA_IMAGE }                       from '@shared/types/Media'
-import { ALL_IMAGES, FOOD_GALLERY, OUTDOOR_GALLERY, PRODUCT_GALLERY, LANDSCAPE_GALLERY } from '@shared/constants/MEDIA'
+import { ALL_IMAGES, FOOD_GALLERY, OUTDOOR_GALLERY, PRODUCT_GALLERY, LANDSCAPE_GALLERY, OTHERS_GALLERY } from '@shared/constants/MEDIA'
 import { interleave }                             from '@shared/utils/interleave'
 
 // The photography grid is a projection of the centralised image galleries — no
@@ -22,44 +22,24 @@ function toProject(image: MEDIA_IMAGE): PROJECT_LIST_ITEM {
     category:    image.category,
     coverImage,
     isFeatured:  false,
-    isLandscape: false,
+    // Wide frames render as landscape cards; taller frames stay portrait.
+    isLandscape: image.width > image.height,
   }
 }
 
 export const PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = ALL_IMAGES.map(toProject)
 
-// Landscape stills rendered as wide cards in their own section on the photography page.
-function toLandscapeProject(image: MEDIA_IMAGE): PROJECT_LIST_ITEM {
-  return { ...toProject(image), isLandscape: true }
-}
-
-export const LANDSCAPE_PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] =
-  LANDSCAPE_GALLERY.map(toLandscapeProject)
-
-// The "All" tab round-robins the categories — one Food, one Outdoor, one
-// Product, then repeat — so the grid alternates instead of showing each
-// category in a block.
+// The "All" tab round-robins every category — one from each in turn, then repeat —
+// so the grid alternates categories instead of showing each in a block. It spans
+// all galleries (including the mixed-orientation Real Estate and Others sets).
 export const PHOTOGRAPHY_ALL: readonly PROJECT_LIST_ITEM[] = interleave([
   FOOD_GALLERY.map(toProject),
   OUTDOOR_GALLERY.map(toProject),
   PRODUCT_GALLERY.map(toProject),
+  LANDSCAPE_GALLERY.map(toProject),
+  OTHERS_GALLERY.map(toProject),
 ])
 
-// Curated picks previewed on the home page before "View all". Edit these ids to
-// promote your best frames — each must match a PHOTOGRAPHY item id (e.g. `outdoor-3`).
-const FEATURED_PHOTOGRAPHY_IDS: readonly string[] = [
-  'outdoor-1',
-  'food-1',
-  'product-1',
-  'outdoor-5',
-  'food-4',
-  'product-6',
-]
-
-const PHOTOGRAPHY_BY_ID: ReadonlyMap<string, PROJECT_LIST_ITEM> = new Map(
-  PHOTOGRAPHY.map(project => [project.id, project]),
-)
-
-export const FEATURED_PHOTOGRAPHY: readonly PROJECT_LIST_ITEM[] = FEATURED_PHOTOGRAPHY_IDS
-  .map(id => PHOTOGRAPHY_BY_ID.get(id))
-  .filter((project): project is PROJECT_LIST_ITEM => project !== undefined)
+// Number of frames the home photography grid shows before "Load more" reveals
+// the remaining images of the active filter, inline on the same page.
+export const PHOTOGRAPHY_PREVIEW_COUNT = 6
