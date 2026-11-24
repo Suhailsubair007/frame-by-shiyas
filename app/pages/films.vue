@@ -2,6 +2,7 @@
 import { REELS } from '@shared/constants/REELS'
 import { FILMS } from '@shared/constants/FILMS'
 import { META } from '@shared/constants/META'
+import { ROUTES } from '@shared/constants/ROUTES'
 import type { VIDEO_TAB } from '@shared/constants/VIDEO_FILTERS'
 
 definePageMeta({ layout: 'default' })
@@ -15,9 +16,15 @@ function onTabChange(tab: VIDEO_TAB): void {
 const showLandscape = computed(() => activeTab.value === 'all' || activeTab.value === 'landscape')
 const showReels = computed(() => activeTab.value === 'all' || activeTab.value === 'reels')
 
-useSeoMeta({
+// Per-page canonical, OG/Twitter tags and schema.org graph — see composables/useSeo.ts
+useSeo({
+  path: ROUTES.FILMS,
   title: `Films & Reels — ${META.SITE_NAME}`,
   description: 'The full film and reel archive by Muhammed Shiyas — landscape films and short-form reels from Sharjah, UAE.',
+  breadcrumbs: [
+    { name: 'Home', path: ROUTES.HOME },
+    { name: 'Films & Reels', path: ROUTES.FILMS },
+  ],
 })
 </script>
 

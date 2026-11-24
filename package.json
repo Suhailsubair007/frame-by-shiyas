@@ -21,7 +21,6 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.16.0",
     "@nuxt/fonts": "^0.14.0",
-    "@nuxt/image": "^2.1.0",
     "@tailwindcss/vite": "^4.3.3",
     "eslint": "^10.8.0",
     "prettier": "^3.9.6",

@@ -4,8 +4,8 @@ export const META = {
   JOB_TITLE:           'Videographer & Photographer',
   TAGLINE:             'Visual Storyteller',
   LOCATION:            'Sharjah, UAE',
-  DEFAULT_TITLE:       'Muhammed Shiyas — Videographer & Photographer in Sharjah, UAE',
-  DEFAULT_DESCRIPTION: 'Muhammed Shiyas is a videographer, photographer and editor based in Sharjah, UAE — delivering broadcast-quality content for advertising campaigns, weddings, and brands across the UAE and India.',
+  DEFAULT_TITLE:       'Muhammed Shiyas — Videographer & Photographer in Sharjah & Dubai, UAE',
+  DEFAULT_DESCRIPTION: 'Muhammed Shiyas is a videographer, photographer and editor based in Sharjah, UAE — delivering broadcast-quality content for advertising campaigns, weddings, and brands across Dubai, the UAE and India.',
   // Absolute URL to a real CDN-served landscape image so social shares (WhatsApp,
   // Instagram, X) render a preview. Must stay absolute — relative paths break scrapers.
   OG_IMAGE:            'https://cdn.muhmdshiyas.com/shiyas/2.jpg',
@@ -50,24 +50,6 @@ export const META = {
   ],
 
   LANGUAGES: ['English', 'Hindi', 'Arabic', 'Malayalam'],
-
-  // Keyword matching for search engines — UAE terms lead, India follows.
-  KEYWORDS: [
-    'videographer Sharjah',
-    'videographer UAE',
-    'videographer Dubai',
-    'photographer Sharjah',
-    'photographer UAE',
-    'wedding videographer UAE',
-    'wedding photographer UAE',
-    'advertising videographer UAE',
-    'corporate video production UAE',
-    'commercial photographer Dubai',
-    'social media content creator UAE',
-    'videographer India',
-    'wedding videographer India',
-    'Muhammed Shiyas',
-  ].join(', '),
 } as const
 
 // Single-page site — nav items scroll to in-page section anchors, not routes.
