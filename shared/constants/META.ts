@@ -12,6 +12,10 @@ export const META = {
   OG_IMAGE_ALT:        'Muhammed Shiyas — videographer and photographer based in Sharjah, UAE',
   TWITTER_HANDLE:      '@framebyshiyas',
   BASE_URL:            'https://muhmdshiyas.com',
+  // max-image-preview/max-video-preview opt into Google's largest preview sizes
+  // in search results instead of the small-thumbnail default — meaningful for a
+  // photography/videography site, where a bigger preview is most of the CTR.
+  ROBOTS_DIRECTIVE:    'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
   EMAIL:               'm1shiyas1@gmail.com',
   WORKS_URL:           'https://drive.google.com/drive/folders/19ChoROaaYKoOcms9ksamDZhjHyLnhZmT',
 

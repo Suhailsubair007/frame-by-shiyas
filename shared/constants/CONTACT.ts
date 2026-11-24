@@ -12,7 +12,7 @@ export const CONTACT = {
 
   HEADING_TOP:  "Let's Work",
   HEADING_FOOT: 'Together.',
-  TAGLINE:  'Available for advertising campaigns, weddings, corporate productions, and social media content across the UAE and beyond.',
+  TAGLINE:  'Available for advertising campaigns, weddings, corporate productions, and social media content across Dubai, Sharjah and the wider UAE.',
 
   INSTAGRAM: 'https://www.instagram.com/muhmdshiyas/?hl=en',
 } as const
