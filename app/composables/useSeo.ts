@@ -38,7 +38,7 @@ export function useSeo(options: PAGE_SEO_OPTIONS = {}): void {
     title,
     description,
     author:            META.OWNER,
-    robots:            'index, follow',
+    robots:            META.ROBOTS_DIRECTIVE,
 
     ogTitle:           title,
     ogDescription:     description,
