@@ -45,7 +45,9 @@ function buildImage(category: GALLERY_CATEGORY, frame: number): MEDIA_IMAGE {
     id:       `${category}-${frame}`,
     url:      `${IMAGE_BASE}/${category}/P${frame}.webp`,
     title:    `${label} ${frame}`,
-    alt:      `${label} photography by Muhammed Shiyas — Sharjah, UAE`,
+    // Frame number keeps each image's alt text distinct rather than every
+    // frame in a category sharing one identical description.
+    alt:      `${label} photography ${frame} by Muhammed Shiyas — Sharjah, UAE`,
     category,
     width:    IMAGE_WIDTH,
     height:   IMAGE_HEIGHT,
